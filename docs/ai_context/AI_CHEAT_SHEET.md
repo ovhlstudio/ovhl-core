@@ -262,6 +262,94 @@ AI HARUS PROAKTIF. Kalau file di bawah ini **belum di-upload**, AI wajib **memin
 
 ---
 
+## 🧪 TESTING & DEBUGGING PATTERNS
+
+### Manual Testing Approach
+
+- Jika AI menyarankan untuk membuat test manual script di studio, ai dapat generate di vs code dan menaruh didalam folder tests yang sudah disediakan.
+
+```lua
+-- Quick Debugging via Command Bar
+local OVHL = _G.OVHL
+
+-- 1. List all loaded services
+print("📋 Loaded Services:")
+for name, service in pairs(OVHL:getAllServices()) do
+    print("   ✅ " .. name)
+end
+
+-- 2. Test specific service
+local config = OVHL:getService("ConfigService")
+print("🌍 Environment:", config:getEnvironment())
+
+-- 3. Quick logger test
+local logger = OVHL:getService("LoggerService")
+logger:Info("ManualTest", "Testing from command bar!")
+```
+
+### Test Folder Structure (Organization Only)
+
+```bash
+./ <-- root
+├──
+src/
+├── server/           → Framework
+├── client/           → Framework
+└── shared/           → Framework
+test/
+├── server/           → NamaScript.server.lua
+├── client/           → NamaScript.clilent.lua
+└── shared/           → NamaScript.modul.lua atau client.lua atau server.lua
+
+```
+
+> \*\*WARNING UNTUK AI : SAAT MEMBUAT CODE TEST PERHATIKAN `.server.lua` `.client.lua` `.modul.lua` AGAR TER ENCODE DENGAN BAIK OLEH ROJO
+
+---
+
+### Rojo Mapping Saat ini dan WORK :
+
+```json
+{
+  "name": "ovhl-core",
+  "tree": {
+    "$className": "DataModel",
+    "ReplicatedStorage": {
+      "$className": "ReplicatedStorage",
+      "OVHL_Shared": {
+        "$path": "src/shared"
+      },
+      "OVHL_test_Shared": {
+        "$path": "test/shared"
+      }
+    },
+    "ServerScriptService": {
+      "$className": "ServerScriptService",
+      "OVHL_Server": {
+        "$path": "src/server"
+      },
+      "OVHL_test_Server": {
+        "$path": "test/server"
+      }
+    },
+    "StarterPlayer": {
+      "$className": "StarterPlayer",
+      "StarterPlayerScripts": {
+        "$className": "StarterPlayerScripts",
+        "OVHL_Client": {
+          "$path": "src/client"
+        },
+        "OVHL_test_Client": {
+          "$path": "test/client"
+        }
+      }
+    }
+  }
+}
+```
+
+---
+
 ### ✅ AI BEHAVIOR RULES
 
 1.  Kalau task baru belum punya konteks penuh → **tanya file-nya dulu**
