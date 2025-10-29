@@ -1,102 +1,215 @@
-# 🗺️ AI ROADMAP - OVHL CORE v1 (Lengkap Menuju Deploy)
+# 🗺️ OVHL ROADMAP - FULL STACK DEVELOPMENT
 
-Dokumen ini berisi daftar **tugas pengembangan** yang terstruktur per fase untuk membangun OVHL Core v1 dari nol hingga siap deploy. Gunakan ini sebagai panduan utama sesi kerja AI Co-Developer.
+> AI Generate Code → run.sh sebagai kurir → Developer Execute
 
-**Update Terakhir:** 29 Oktober 2025
+### **PROTOCOL RUN.SH:**
 
----
+1. **AI selalu kasih run.sh lengkap** dengan semua code yang needed
+2. **Developer cuma execute 1 command:** `bash ./lokal/tools/run.sh`
+3. **run.sh handle semua:** validation, backup, deployment, verification
+4. **No manual copy-paste code**, no manual file creation
 
-## 📖 Cara Menggunakan Roadmap Ini
+### **STRUCTURE RUN.SH:**
 
-- **Fokus per Fase:** Selesaikan task di Fase 1 sebelum lanjut ke Fase 2, dst. kecuali task bisa diparalelkan.
-- **Update Status:** Saat memulai/menyelesaikan task, update kolom `Status`.
-- **Cek Success Criteria:** Pastikan semua kriteria terpenuhi sebelum menandai task `Done`.
-- **Gunakan Referensi:** Buka file blueprint yang dirujuk jika butuh detail implementasi.
-- **Wajib Logging:** **SETIAP AKHIR SESI KERJA DENGAN AI**, Developer **WAJIB** mengisi `AI_DEV_LOG.md` dengan detail:
-  - Task ID yang dikerjakan.
-  - Progres spesifik (file apa dibuat/diubah, fungsi apa selesai).
-  - Hasil (Sukses? Error? Stuck?).
-  - **Jika Error/Stuck:** Jelaskan errornya, apa yang sudah dicoba AI/Developer, dan **perintahkan AI berikutnya** untuk mencoba solusi spesifik atau memperbaiki.
-  - **Jika Sukses:** Perintahkan AI berikutnya untuk lanjut ke sub-task berikutnya atau task baru.
+```bash
+#!/bin/bash
+# ============================================
+# OVHL-XXX: Task Name
+# Anti-Human-Error Deployment
+# ============================================
 
----
+# PHASE 1: ENVIRONMENT VALIDATION
+# - Cek project structure
+# - Validate dependencies
 
-## 🏗️ FASE 1: Fondasi Inti (Core Systems Minimal)
+# PHASE 2: BACKUP & PREPARATION
+# - Backup existing files location ./lokal/backups
+# - Create necessary directories
 
-**Tujuan:** Membangun kerangka dasar agar modul bisa di-load, berkomunikasi internal, dan melakukan logging.
+# PHASE 3: DEPLOYMENT
+# - Deploy ALL needed files sekaligus
+# - Include proper error handling
 
-| Task ID  | Nama Task                         | Deskripsi Singkat                                                                  | Status  | Prioritas | Success Criteria                                                                                 | Referensi Blueprint     | Catatan/Blocker                         |
-| :------- | :-------------------------------- | :--------------------------------------------------------------------------------- | :------ | :-------- | :----------------------------------------------------------------------------------------------- | :---------------------- | :-------------------------------------- |
-| OVHL-001 | Implementasi `LoggerService`      | Membuat `LoggerService.lua` (Info, Warn, Error), baca flag debug global.           | `To Do` | Kritis    | Output log sesuai format; Menghormati flag `Core.DebugEnabled`.                                  | `03`, `07`              | -                                       |
-| OVHL-004 | Implementasi `ConfigService`      | Membuat `ConfigService.lua` (baca `__config`, dasar `GetConfig`, flag debug).      | `To Do` | Kritis    | `OVHL:GetConfig` mengembalikan `__config`; `Core.DebugEnabled` bisa dibaca.                      | `01`, `03`, `07`        | Perlu `LoggerService` (OVHL-001).       |
-| OVHL-005 | Implementasi `DependencyResolver` | Membuat utilitas untuk membaca `dependencies` & `priority`, hasilkan load order.   | `To Do` | Kritis    | Bisa menghasilkan urutan load yang benar untuk 5+ modul tes; Deteksi circular dep.               | `01`, `03`              | Perlu `LoggerService` (OVHL-001).       |
-| OVHL-006 | Implementasi `ServiceManager`     | Membuat `ServiceManager.lua` (Auto-discover `services/`, panggil lifecycle DI v1). | `To Do` | Kritis    | Services di `services/` ter-load sesuai urutan; Lifecycle `:Inject`,`:Init`,`:Start` terpanggil. | `01`, `03`, `07`        | Perlu Logger, Config, DepResolver.      |
-| OVHL-007 | Implementasi `ModuleLoader`       | Membuat `ModuleLoader.lua` (Auto-discover `modules/`, panggil lifecycle DI v1).    | `To Do` | Kritis    | Modules di `modules/` ter-load sesuai urutan; Lifecycle terpanggil.                              | `01`, `03`, `07`        | Perlu Logger, Config, DepResolver.      |
-| OVHL-003 | Implementasi `EventBusService`    | Membuat `EventBusService.lua` (`Emit`, `Subscribe` internal server).               | `To Do` | Tinggi    | Event bisa dikirim & diterima antar service/module; `pcall` wrap di callback.                    | `01`, `07`              | Perlu `LoggerService` (OVHL-001).       |
-| OVHL-008 | Implementasi `OVHL_Global`        | Membuat `OVHL_Global.lua` dengan shortcut API dasar (`GetConfig`, `Emit`, `Sub`).  | `To Do` | Tinggi    | API dasar berfungsi di server.                                                                   | `01`, `07`              | Perlu ServiceManager, EventBus, Config. |
-| OVHL-009 | Setup Basic Test Runner (TestEZ)  | Konfigurasi TestEZ dan buat 1 tes unit dasar untuk `LoggerService`.                | `To Do` | Sedang    | Tes `LoggerService` bisa dijalankan dan pass.                                                    | `02` (SDK), TestEZ Docs | -                                       |
+# PHASE 4: VERIFICATION
+# - Verify files created
+# - Basic syntax check
+# - Generate test commands
 
----
+echo "🎉 Task OVHL-XXX COMPLETED!"
+echo "📝 Next: Update AI_DEV_LOG.md"
+```
 
-## ✨ FASE 2: Fitur Inti & Workflow Developer
+## 🎯 STRATEGI: BOTTOM-UP DEVELOPMENT
 
-**Tujuan:** Mengimplementasikan fitur utama (UI Hooks, Coder/Builder, Networking v1 Dasar) dan meningkatkan alur kerja developer.
-
-| Task ID  | Nama Task                               | Deskripsi Singkat                                                                                 | Status  | Prioritas | Success Criteria                                                                                           | Referensi Blueprint | Catatan/Blocker                     |
-| :------- | :-------------------------------------- | :------------------------------------------------------------------------------------------------ | :------ | :-------- | :--------------------------------------------------------------------------------------------------------- | :------------------ | :---------------------------------- |
-| OVHL-010 | Integrasi Fusion & Setup Hooks          | Instal Fusion via Wally. Buat `ThemeController` dasar & `useTheme` hook.                          | `To Do` | Tinggi    | Wally instal Fusion; `useTheme()` mengembalikan state tema; Komponen UI dasar bisa render pakai `New`.     | `04`                | Wally harus terinstal.              |
-| OVHL-011 | Implementasi `StateManager`             | Membuat `StateManager.lua` (Client Controller) untuk global UI state (`Get/Set/Sub`).             | `To Do` | Tinggi    | `OVHL:SetState`, `GetState`, `Subscribe` (client) berfungsi; UI Hooks bisa pakai global state.             | `01`, `04`, `07`    | Perlu `ClientController` bootstrap. |
-| OVHL-012 | Implementasi `UIEngine`                 | Membuat `UIEngine.lua` (Client Controller) untuk me-mount/unmount komponen UI Hooks.              | `To Do` | Tinggi    | Bisa mount komponen dari `modules/` client; Lifecycle `Cleanup` Fusion terpanggil.                         | `04`, `07`          | Perlu Fusion (OVHL-010).            |
-| OVHL-013 | Implementasi `ComponentService`         | Membuat `ComponentService.lua` (Server & Client) untuk Coder/Builder workflow (`Knit`/`Destroy`). | `To Do` | Tinggi    | Komponen di `shared/components/` ter-load; `:Knit` terpanggil saat instance di-tag; `:Destroy` terpanggil. | `05`, `07`          | Perlu Auto-Discovery stabil.        |
-| OVHL-014 | Implementasi `RemoteManager` v1 (Dasar) | Membuat `RemoteManagerService.lua` & `RemoteClient.lua`, API `RegisterHandler`, `Invoke`, `Fire`. | `To Do` | Kritis    | Client bisa `Invoke`/`Fire` ke server; Server bisa panggil handler terdaftar.                              | `01`, `06`, `07`    | Perlu DI & Auto-Discovery.          |
-| OVHL-015 | Implementasi Schema Validation (`t`)    | Integrasikan library `t`. Buat `NetworkSchema.lua`. `RemoteManager` otomatis validasi.            | `To Do` | Kritis    | Remote call gagal jika argumen tidak cocok `NetworkSchema.lua`.                                            | `06`                | Perlu `RemoteManager` (OVHL-014).   |
-| OVHL-016 | Implementasi Rate Limiting              | Tambahkan middleware Rate Limiting otomatis ke `RemoteManager` v1.                                | `To Do` | Tinggi    | Spam `Invoke`/`Fire` dari client ditolak server.                                                           | `06`                | Perlu `RemoteManager` (OVHL-014).   |
-| OVHL-017 | Setup Basic CLI Generator (SDK)         | Buat script `npm run create:service` dasar di folder `sdk/`.                                      | `To Do` | Sedang    | CLI bisa generate file `Service.lua` baru dengan `__manifest` kosong.                                      | `02`, `09`          | Perlu Node.js setup.                |
-| OVHL-018 | Implementasi Basic Hot Reloading (UI)   | Buat service/mekanisme dasar untuk reload UI Hooks saat file `.lua` client berubah.               | `To Do` | Sedang    | Perubahan pada file UI di VS Code terlihat di Studio tanpa restart Play.                                   | `02`, `04`          | Perlu `UIEngine` (OVHL-012).        |
+**Foundation → Core → Features → Polish**
 
 ---
 
-## 💎 FASE 3: Polish, Ekosistem & Kesiapan Deploy
+## 🏗️ FASE 1: FOUNDATION & BOOTSTRAP [BLOCKED]
 
-**Tujuan:** Memoles fitur, menambah robustness, menyiapkan fondasi ekosistem, dan memastikan framework siap produksi.
+**Tujuan:** Basic system yang SEMUA module butuhkan
 
-| Task ID  | Nama Task                                    | Deskripsi Singkat                                                                           | Status    | Prioritas | Success Criteria                                                                                   | Referensi Blueprint | Catatan/Blocker                     |
-| :------- | :------------------------------------------- | :------------------------------------------------------------------------------------------ | :-------- | :-------- | :------------------------------------------------------------------------------------------------- | :------------------ | :---------------------------------- |
-| OVHL-020 | Implementasi Network Batching                | Tambahkan middleware batching otomatis untuk `OVHL:Fire` di `RemoteClient`.                 | `Backlog` | Sedang    | Banyak `Fire` dalam 1 frame dikirim sebagai 1 paket network (cek via NetworkMonitor).              | `06`                | Perlu `RemoteManager` v1 stabil.    |
-| OVHL-021 | Implementasi Network Caching                 | Tambahkan support `__cache` di `RemoteManager` v1 untuk `Invoke`.                           | `Backlog` | Sedang    | `Invoke` dengan `__cache` mengembalikan hasil dari cache jika valid.                               | `06`                | Perlu `RemoteManager` v1 stabil.    |
-| OVHL-022 | Implementasi `NetworkMonitorService`         | Buat `NetworkMonitorService.lua` yang dicatat oleh `RemoteManager` v1.                      | `Backlog` | Sedang    | Service mencatat data latency, status, caller untuk setiap remote call.                            | `06`                | Perlu `RemoteManager` v1 stabil.    |
-| OVHL-023 | Implementasi `DataService` (Real)            | Ganti mock `DataService` dengan implementasi DataStore Roblox (atau DataStore2/ProfileSvc). | `Backlog` | Tinggi    | Data player bisa disimpan & dimuat persisten. Handle `pcall`, retry, session locking.              | `03`, `08`          | Perlu DI & `LoggerService`.         |
-| OVHL-024 | Implementasi `ConfigService` (Live)          | Integrasikan `ConfigService` dengan `DataService` untuk live config update. Emit event.     | `Backlog` | Sedang    | `OVHL:GetConfig` mengembalikan live config; `ConfigUpdated:Modul` ter-emit saat `Set`.             | `01`, `09`          | Perlu `DataService` (OVHL-023).     |
-| OVHL-025 | Buat Admin Panel Dasar                       | Buat UI Admin Panel dasar (Hooks v1) untuk melihat log & mengubah config live.              | `Backlog` | Sedang    | Admin bisa lihat log `NetworkMonitor` & `Logger`; Bisa ubah `Core.DebugEnabled` secara live.       | `09`                | Perlu UI, Config Live, Net Monitor. |
-| OVHL-026 | Tingkatkan CLI Generators (SDK)              | Tambahkan fitur interaktif (TUI), template lebih canggih, update dependensi otomatis.       | `Backlog` | Rendah    | `create:service` bisa tanya deps & update manifest lain; `create:ui` & `create:component` lengkap. | `02`, `09`          | Perlu CLI dasar (OVHL-017).         |
-| OVHL-027 | Implementasi State Preservation (Hot Reload) | Tambahkan mekanisme simpan/restore state dasar saat Hot Reloading UI.                       | `Backlog` | Rendah    | State UI Hooks tidak selalu reset total saat file berubah.                                         | `02`, `04`          | Perlu Hot Reload dasar (OVHL-018).  |
-| OVHL-028 | Tulis Unit Tests Komprehensif                | Tambahkan unit test (TestEZ) untuk semua Core Services & Controllers.                       | `Backlog` | Sedang    | Coverage > 80% untuk core systems.                                                                 | `02`, TestEZ Docs   | Perlu Test Runner (OVHL-009).       |
-| OVHL-029 | Buat Dokumentasi Detail Lengkap              | Finalisasi semua file blueprint `00` - `10` dengan detail implementasi & contoh.            | `Backlog` | Tinggi    | Semua blueprint lengkap, akurat, dan siap dibaca developer.                                        | Semua               | Selesaikan implementasi dulu.       |
-| OVHL-030 | Performance Benchmarking & Optimasi          | Lakukan profiling & optimasi pada critical path (startup, remotes, UI render).              | `Backlog` | Sedang    | Startup time < target; Remote latency < target; FPS UI stabil.                                     | `01` (Perf Targets) | Perlu fitur inti selesai.           |
+### 📋 TASKS:
 
----
+- [x] **OVHL-008**: `OVHL_Global.lua` - Global API Accessor
+- [x] **OVHL-004**: `ConfigService.lua` - Configuration Management
+- [x] **OVHL-001**: `LoggerService.lua` - Structured Logging System
+- [x] **OVHL-005**: `DependencyResolver.lua` - Dependency Graph Solver
+- [x] **OVHL-006**: `ServiceManager.lua` - Auto-discovery Services
+- [x] **OVHL-007**: `ModuleLoader.lua` - Auto-discovery Modules
+- [x] **OVHL-002**: `init.server.lua` - Server Bootstrap
+- [x] **OVHL-009**: `init.client.lua` - Client Bootstrap
 
-## ✅ Selesai (Completed Tasks)
+### ✅ SUCCESS CRITERIA:
 
-| Task ID  | Nama Task       | Tanggal Selesai | Catatan Hasil                                   |
-| :------- | :-------------- | :-------------- | :---------------------------------------------- |
-| OVHL-000 | Setup Proyek v1 | 29 Okt 2025     | Struktur folder, file config, Rojo, Wally siap. |
-| ...      | ...             | ...             | ...                                             |
+1. Server bisa startup tanpa error
+2. Basic services ter-load otomatis
+3. Dependency injection work
+4. Logging system operational
 
 ---
 
-**Legenda Status:**
+## 🔧 FASE 2: CORE INFRASTRUCTURE [BLOCKED]
 
-- `To Do`: Siap dikerjakan.
-- `In Progress`: Sedang dikerjakan.
-- `Review`: Menunggu review/testing.
-- `Done`: Selesai.
-- `Blocked`: Terhalang task lain / masalah eksternal.
-- `Backlog`: Ide / task untuk masa depan.
+**Tujuan:** Communication & State Management
 
-**Legenda Prioritas:**
+### 📋 TASKS:
 
-- `Kritis`: Harus segera.
-- `Tinggi`: Penting.
-- `Sedang`: Normal.
-- `Rendah`: Bisa ditunda.
+- [ ] **OVHL-003**: `EventBusService.lua` - Internal Pub/Sub Server
+- [ ] **OVHL-014**: `RemoteManagerService.lua` - Client-Server Communication
+- [ ] **OVHL-015**: `NetworkSchema.lua` - Network Validation
+- [ ] **OVHL-010**: `Fusion Integration` - UI Framework Setup
+- [ ] **OVHL-011**: `StateManager.lua` - Global UI State
+- [ ] **OVHL-012**: `UIEngine.lua` - UI Component Manager
+
+### ✅ SUCCESS CRITERIA:
+
+1. EventBus bisa kirim/terima event
+2. Client-server communication work
+3. Network validation aktif
+4. UI framework siap dipakai
+
+---
+
+## 🎮 FASE 3: GAME MODULES & FEATURES [BLOCKED]
+
+**Tujuan:** Actual Game Functionality
+
+### 📋 TASKS:
+
+- [ ] **MOD-TEST-01**: `TestService.lua` - Server-side Test Module
+- [ ] **MOD-TEST-02**: `TestController.lua` - Client-side Test Module
+- [ ] **MOD-TEST-03**: `TestUI.lua` - UI Test Component
+- [ ] **OVHL-013**: `ComponentService.lua` - Coder/Builder Workflow
+- [ ] **MOD-COMP-01**: `SpinningCoin.lua` - Example Component
+- [ ] **OVHL-023**: `DataService.lua` - Player Data Management
+
+### ✅ SUCCESS CRITERIA:
+
+1. Test module server-client communication work
+2. UI components bisa render dan interaktif
+3. Coder/Builder workflow operational
+4. Player data bisa save/load
+
+---
+
+## 🧪 FASE 4: TESTING & INTEGRATION [BLOCKED]
+
+**Tujuan:** End-to-end Testing & Validation
+
+### 📋 TASKS:
+
+- [ ] **TEST-01**: Server Module Integration Test
+- [ ] **TEST-02**: Client Module Integration Test
+- [ ] **TEST-03**: Network Communication Test
+- [ ] **TEST-04**: UI State Management Test
+- [ ] **TEST-05**: Component System Test
+- [ ] **OVHL-028**: Unit Test Coverage Setup
+
+### ✅ SUCCESS CRITERIA:
+
+1. Semua core systems ter-integrasi dengan baik
+2. Network communication stable
+3. UI responsive dan interactive
+4. Component system work seperti expected
+
+---
+
+## 🚀 FASE 5: ADVANCED FEATURES [BLOCKED]
+
+**Tujuan:** Production-ready Features
+
+### 📋 TASKS:
+
+- [ ] **OVHL-016**: Rate Limiting - Security Enhancement
+- [ ] **OVHL-020**: Network Batching - Performance
+- [ ] **OVHL-021**: Network Caching - Performance
+- [ ] **OVHL-022**: Network Monitoring - Analytics
+- [ ] **OVHL-018**: Hot Reloading - Developer Experience
+- [ ] **OVHL-025**: Admin Panel - Management Tools
+
+### ✅ SUCCESS CRITERIA:
+
+1. Security features aktif
+2. Performance optimization implemented
+3. Monitoring system operational
+4. Developer tools ready
+
+---
+
+## 🛠️ FASE 6: TOOLING & DEPLOY [BLOCKED]
+
+**Tujuan:** Production Deployment & Maintenance
+
+### 📋 TASKS:
+
+- [ ] **OVHL-017**: CLI Generators - Developer Tools
+- [ ] **OVHL-026**: Advanced CLI Features
+- [ ] **OVHL-029**: Documentation Complete
+- [ ] **OVHL-030**: Performance Benchmarking
+- [ ] **DEPLOY-01**: Production Build & Test
+- [ ] **DEPLOY-02**: Live Environment Validation
+
+### ✅ SUCCESS CRITERIA:
+
+1. CLI tools productive
+2. Documentation comprehensive
+3. Performance metrics memenuhi target
+4. Siap deploy ke production
+
+---
+
+## 🔄 CURRENT STATUS: **FASE 1 - IN PROGRESS**
+
+### 🎯 NOW WORKING ON: **OVHL-008 - OVHL_Global.lua**
+
+**Blockers:** None - Ready to start!
+
+### 📝 NEXT UP AFTER THIS:
+
+1. OVHL-004: ConfigService
+2. OVHL-001: LoggerService
+3. OVHL-005: DependencyResolver
+
+---
+
+## 🎪 SPECIAL PHASES:
+
+### 🧪 **TEST MODULES PHASE** (Fase 3)
+
+- TestService (Server) ↔ TestController (Client) ↔ TestUI (Interface)
+- Validasi full stack communication
+- Jadi blueprint untuk module development
+
+### 🔧 **TOOLING PHASE** (Fase 6)
+
+- `create:service` - Generate service template
+- `create:module` - Generate game module
+- `create:component` - Generate coder/builder component
+- `create:ui` - Generate UI component
+
+---
+
+## 🚨 DEPENDENCY CHAIN YANG BENER:
+
+> OVHL_Global → ConfigService → LoggerService → DependencyResolver → ServiceManager → ModuleLoader → init.server → EventBus → RemoteManager → Fusion → StateManager → TestModules → Advanced Features
