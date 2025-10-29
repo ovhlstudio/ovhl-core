@@ -1,0 +1,9 @@
+[package]
+name = "ovhl-studio/my-game"
+version = "1.0.0"
+registry = "https://github.com/UpliftGames/wally-index"
+realm = "shared"
+
+[dependencies]
+# Nanti kita isi library (Fusion, 't', dll) di sini
+# Contoh: Fusion = "elttob/fusion@0.2"

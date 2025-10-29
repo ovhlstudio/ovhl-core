@@ -1,0 +1,16 @@
+{
+  "name": "ovhl-sdk",
+  "version": "1.0.0",
+  "description": "SDK dan Dev Tools untuk OVHL V1",
+  "main": "src/index.js",
+  "scripts": {
+    "create:service": "node src/index.js create service",
+    "create:component": "node src/index.js create component"
+  },
+  "keywords": ["ovhl", "roblox"],
+  "author": "OVHL Studio",
+  "license": "MIT",
+  "dependencies": {
+    "inquirer": "^9.0.0"
+  }
+}
