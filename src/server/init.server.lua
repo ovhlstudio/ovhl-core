@@ -91,10 +91,13 @@ local function AutoDiscoverModules(folder, logger, resolver, manuallyLoaded)
     return discovered, loadOrder
 end
 
-local function InitializeModules(discovered, loadOrder, logger, existingInstances)
+-- FIXED: Pass correct services parameter to modules
+local function InitializeModules(discovered, loadOrder, logger, existingInstances, availableServices)
     existingInstances = existingInstances or {}
     local instances = existingInstances
     logger:Info("Initializing modules", {count = #loadOrder})
+    
+    -- PHASE 1: Create instances
     for _, moduleName in ipairs(loadOrder) do
         local moduleData = FindInDiscovered(moduleName, discovered)
         if not moduleData then logger:Error("Module not found in discovered list", {module = moduleName}) continue end
@@ -108,13 +111,23 @@ local function InitializeModules(discovered, loadOrder, logger, existingInstance
             table.insert(BOOTSTRAP_STATE.errors, {module = moduleName, error = "Instance creation failed: " .. tostring(instance)})
         end
     end
+    
+    -- PHASE 2: Inject dependencies
+    -- FIX: Use availableServices (from services) instead of instances (from modules) for injection
+    local servicesForInjection = availableServices or instances
     for _, moduleName in ipairs(loadOrder) do
         local instance = instances[moduleName]
         if instance and instance.Inject then
-            local success, err = pcall(function() instance:Inject(instances) end)
-            if not success then logger:Error("Injection failed", {module = moduleName, error = err}) end
+            local success, err = pcall(function() instance:Inject(servicesForInjection) end)
+            if not success then 
+                logger:Error("Injection failed", {module = moduleName, error = err})
+            else
+                logger:Debug("Injection completed", {module = moduleName})
+            end
         end
     end
+    
+    -- PHASE 3: Initialize
     for _, moduleName in ipairs(loadOrder) do
         local instance = instances[moduleName]
         if instance and instance.Init then
@@ -125,9 +138,13 @@ local function InitializeModules(discovered, loadOrder, logger, existingInstance
             elseif result == false then
                 logger:Warn("Module initialization aborted", {module = moduleName})
                 instances[moduleName] = nil
+            else
+                logger:Debug("Initialization successful", {module = moduleName})
             end
         end
     end
+    
+    -- PHASE 4: Start (async)
     for _, moduleName in ipairs(loadOrder) do
         local instance = instances[moduleName]
         if instance and instance.Start then
@@ -152,7 +169,7 @@ print("📋 PHASE 3: Initializing Services")
 BOOTSTRAP_STATE.phase = "INITIALIZING_SERVICES"
 
 local serviceInstances = {Logger = logger, DependencyResolver = resolver}
-serviceInstances = InitializeModules(discoveredServices, serviceLoadOrder, logger, serviceInstances)
+serviceInstances = InitializeModules(discoveredServices, serviceLoadOrder, logger, serviceInstances, serviceInstances)
 BOOTSTRAP_STATE.services = serviceInstances
 
 print("📋 PHASE 4: Auto-Discovering Modules")
@@ -163,7 +180,8 @@ local discoveredModules, moduleLoadOrder = AutoDiscoverModules(script.modules, l
 if discoveredModules then
     print("📋 PHASE 4.1: Initializing Modules")
     BOOTSTRAP_STATE.phase = "INITIALIZING_MODULES"
-    local moduleInstances = InitializeModules(discoveredModules, moduleLoadOrder, logger)
+    -- FIX: Pass serviceInstances as availableServices so modules can inject real services
+    local moduleInstances = InitializeModules(discoveredModules, moduleLoadOrder, logger, {}, serviceInstances)
     BOOTSTRAP_STATE.modules = moduleInstances
 else
     logger:Warn("No modules discovered or module discovery failed")

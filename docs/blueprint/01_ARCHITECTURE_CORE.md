@@ -64,9 +64,56 @@ OVHL v1 adalah **ekosistem pengembangan game Roblox** yang memprioritaskan:
 │       ├── 📄 NetworkSchema.lua
 │       └── 📁 lib/                     ← Wally packages
 │
+├── 📁 test/                            ← Untuk Script Test Diluar ModuleScript / Manual Scripting via Studio
+│   ├── 📁 client/                      ← WAJIB MENGGUNAKAN [nama script].client.lua
+│   ├── 📁 server/                      ← WAJIB MENGGUNAKAN [nama script].server.lua
+│   ├── 📁 shared/                      ← WAJIB MENGGUNAKAN [nama script].modul.lua / [nama script].server.lua / [nama script].client.lua
 ├── 📄 default.project.json             ← Rojo config
 └── 📄 wally.toml                       ← Dependencies
 ```
+
+### ROJO MAPPING (CURRENT & WORK / SRC & TESTS)
+
+```json
+{
+  "name": "ovhl-core",
+  "tree": {
+    "$className": "DataModel",
+    "ReplicatedStorage": {
+      "$className": "ReplicatedStorage",
+      "OVHL_Shared": {
+        "$path": "src/shared"
+      },
+      "OVHL_test_Shared": {
+        "$path": "test/shared"
+      }
+    },
+    "ServerScriptService": {
+      "$className": "ServerScriptService",
+      "OVHL_Server": {
+        "$path": "src/server"
+      },
+      "OVHL_test_Server": {
+        "$path": "test/server"
+      }
+    },
+    "StarterPlayer": {
+      "$className": "StarterPlayer",
+      "StarterPlayerScripts": {
+        "$className": "StarterPlayerScripts",
+        "OVHL_Client": {
+          "$path": "src/client"
+        },
+        "OVHL_test_Client": {
+          "$path": "test/client"
+        }
+      }
+    }
+  }
+}
+```
+
+---
 
 ### 🔑 KEY CONCEPTS:
 

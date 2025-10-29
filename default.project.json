@@ -6,12 +6,18 @@
       "$className": "ReplicatedStorage",
       "OVHL_Shared": {
         "$path": "src/shared"
+      },
+      "OVHL_test_Shared": {
+        "$path": "test/shared"
       }
     },
     "ServerScriptService": {
       "$className": "ServerScriptService", 
       "OVHL_Server": {
         "$path": "src/server"
+      },
+      "OVHL_test_Server": {
+        "$path": "test/server"
       }
     },
     "StarterPlayer": {
@@ -20,6 +26,9 @@
         "$className": "StarterPlayerScripts",
         "OVHL_Client": {
           "$path": "src/client"
+        },
+        "OVHL_test_Client": {
+          "$path": "test/client"
         }
       }
     }
