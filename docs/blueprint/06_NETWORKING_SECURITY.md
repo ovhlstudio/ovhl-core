@@ -2,16 +2,16 @@
 
 ### 📋 INFORMASI DOKUMEN
 
-| Properti           | Nilai                                                                        |
-| ------------------ | ---------------------------------------------------------------------------- |
-| **ID Dokumen**     | `ARC-v1-006`                                                                 |
-| **Status**         | `Aktif (Rilis Baru)`                                                         |
-| **Lokasi Path**    | `./docs/blueprint/06_NETWORKING_SECURITY.md`                                 |
-| **Tipe Dokumen**   | `Detail Arsitektur & Fitur Networking`                                       |
-| **Target Audiens** | `Core Dev, Module Dev (Server & Client), AI Assistant`                       |
-| **Relasi**         | `Index: 00_MASTER_BLUEPRINT_v1.md`, `Ref: 01_ARCHITECTURE_CORE.md`, `Lib: t` |
-| **Penulis**        | `OVHL Core Team (Direvisi oleh Gemini)`                                      |
-| **Dibuat**         | `29 Oktober 2025`                                                            |
+| Properti           | Nilai                                                                 |
+| ------------------ | --------------------------------------------------------------------- |
+| **ID Dokumen**     | `ARC-v1-006`                                                          |
+| **Status**         | `Aktif (Rilis Baru)`                                                  |
+| **Lokasi Path**    | `./docs/blueprint/06_NETWORKING_SECURITY.md`                          |
+| **Tipe Dokumen**   | `Detail Arsitektur & Fitur Networking`                                |
+| **Target Audiens** | `Core Dev, Module Dev (Server & Client), AI Assistant`                |
+| **Relasi**         | `Index: 00_MASTER_INDEX.md`, `Ref: 01_ARCHITECTURE_CORE.md`, `Lib: t` |
+| **Penulis**        | `OVHL Core Team (Direvisi oleh Gemini)`                               |
+| **Dibuat**         | `29 Oktober 2025`                                                     |
 
 ---
 
@@ -206,6 +206,6 @@ Untuk memahami apa yang terjadi di jaringan, kita butuh data. `NetworkMonitorSer
 
 ### 🔄 Riwayat Perubahan (Changelog)
 
-| Versi | Tanggal     | Penulis                 | Perubahan                                                                                                                                                                                            |
-| :---- | :---------- | :---------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 1.0.0 | 29 Okt 2025 | OVHL Core Team & Gemini | Rilis awal file detail Networking v1. Dibuat dari hasil split `00_MASTER_BLUEPRINT_v1.md`. Menjelaskan arsitektur middleware, Validasi Schema 't', Rate Limiting, Batching, Caching, dan Monitoring. |
+| Versi | Tanggal     | Penulis                 | Perubahan                                                                                                                                                                                     |
+| :---- | :---------- | :---------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1.0.0 | 29 Okt 2025 | OVHL Core Team & Gemini | Rilis awal file detail Networking v1. Dibuat dari hasil split `00_MASTER_INDEX.md`. Menjelaskan arsitektur middleware, Validasi Schema 't', Rate Limiting, Batching, Caching, dan Monitoring. |

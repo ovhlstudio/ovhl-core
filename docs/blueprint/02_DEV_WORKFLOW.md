@@ -2,16 +2,16 @@
 
 ### 📋 INFORMASI DOKUMEN
 
-| Properti           | Nilai                                                              |
-| ------------------ | ------------------------------------------------------------------ |
-| **ID Dokumen**     | `ARC-V1-002`                                                       |
-| **Status**         | `Aktif (Rilis Baru)`                                               |
-| **Lokasi Path**    | `./docs/blueprint/02_DEV_WORKFLOW.md`                              |
-| **Tipe Dokumen**   | `Panduan Setup & Alur Kerja Developer`                             |
-| **Target Audiens** | `All Developers, AI Assistant, Core Team`                          |
-| **Relasi**         | `Index: 00_MASTER_BLUEPRINT_V1.md`, `Ref: 01_ARCHITECTURE_CORE.md` |
-| **Penulis**        | `OVHL Core Team (Direvisi oleh Gemini)`                            |
-| **Dibuat**         | `29 Oktober 2025`                                                  |
+| Properti           | Nilai                                                       |
+| ------------------ | ----------------------------------------------------------- |
+| **ID Dokumen**     | `ARC-V1-002`                                                |
+| **Status**         | `Aktif (Rilis Baru)`                                        |
+| **Lokasi Path**    | `./docs/blueprint/02_DEV_WORKFLOW.md`                       |
+| **Tipe Dokumen**   | `Panduan Setup & Alur Kerja Developer`                      |
+| **Target Audiens** | `All Developers, AI Assistant, Core Team`                   |
+| **Relasi**         | `Index: 00_MASTER_INDEX.md`, `Ref: 01_ARCHITECTURE_CORE.md` |
+| **Penulis**        | `OVHL Core Team (Direvisi oleh Gemini)`                     |
+| **Dibuat**         | `29 Oktober 2025`                                           |
 
 ---
 
