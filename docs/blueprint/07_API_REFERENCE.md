@@ -9,7 +9,7 @@
 | **Lokasi Path**    | `./docs/blueprint/07_API_REFERENCE.md`  |
 | **Tipe Dokumen**   | `Referensi API Publik`                  |
 | **Target Audiens** | `All Developers, AI Assistant`          |
-| **Relasi**         | `Index: 00_MASTER_BLUEPRINT_v1.md`      |
+| **Relasi**         | `Index: 00_MASTER_INDEX.md`             |
 | **Penulis**        | `OVHL Core Team (Direvisi oleh Gemini)` |
 | **Dibuat**         | `29 Oktober 2025`                       |
 
@@ -222,6 +222,6 @@ Ini adalah API untuk modul di `src/shared/components/`.
 
 ### 🔄 Riwayat Perubahan (Changelog)
 
-| Versi | Tanggal     | Penulis                 | Perubahan                                                                                                                                                                                              |
-| :---- | :---------- | :---------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 1.0.0 | 29 Okt 2025 | OVHL Core Team & Gemini | Rilis awal file detail Referensi API v1. Dibuat dari hasil split `00_MASTER_BLUEPRINT_v1.md`. Menggabungkan API dari V1 dan menambahkan API baru untuk DI, UI Hooks, Coder/Builder, dan Networking v1. |
+| Versi | Tanggal     | Penulis                 | Perubahan                                                                                                                                                                                       |
+| :---- | :---------- | :---------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1.0.0 | 29 Okt 2025 | OVHL Core Team & Gemini | Rilis awal file detail Referensi API v1. Dibuat dari hasil split `00_MASTER_INDEX.md`. Menggabungkan API dari V1 dan menambahkan API baru untuk DI, UI Hooks, Coder/Builder, dan Networking v1. |

@@ -1,144 +1,122 @@
---[[
-    File: src/server/services/DependencyResolver.lua
-    Tujuan: Dependency graph solver untuk load order management
-    Versi Modul: 3.0.0
---]]
-
-local OVHL = require(game.ReplicatedStorage.OVHL_Shared.OVHL_Global)
-
 local DependencyResolver = {}
 DependencyResolver.__index = DependencyResolver
 
--- MANIFEST WAJIB
 DependencyResolver.__manifest = {
     name = "DependencyResolver",
-    version = "3.0.0",
+    version = "1.0.0",
     type = "service",
-    dependencies = {"LoggerService"},
+    dependencies = {"Logger"},
     priority = 90,
-    domain = "system",
-    description = "Dependency graph solver untuk load order"
+    domain = "core",
+    description = "Dependency resolution and load order calculation"
 }
 
--- PROPERTIES INTERNAL
-DependencyResolver.logger = nil
+function DependencyResolver.new(logger)
+    local self = setmetatable({}, DependencyResolver)
+    self.logger = logger
+    self.logger:Info("DependencyResolver initialized")
+    return self
+end
 
--- ==================== CORE RESOLVER METHODS ====================
+function DependencyResolver:Inject(services) end
+function DependencyResolver:Init() self.logger:Debug("DependencyResolver init complete") return true end
+function DependencyResolver:Start() self.logger:Debug("DependencyResolver started") end
 
-function DependencyResolver:BuildDependencyGraph(modules)
-    local graph = {
-        nodes = {},
-        edges = {}
-    }
-    
-    -- Build nodes
-    for _, module in ipairs(modules) do
-        local manifest = module.__manifest
-        graph.nodes[manifest.name] = {
-            module = module,
-            priority = manifest.priority or 50,
-            dependencies = manifest.dependencies or {}
+function DependencyResolver:_buildDependencyGraph(discoveredModules)
+    local graph = {nodes = {}, edges = {}}
+    for _, moduleData in ipairs(discoveredModules) do
+        local moduleName = moduleData.name
+        graph.nodes[moduleName] = {
+            name = moduleName,
+            priority = moduleData.manifest.priority or 50,
+            moduleData = moduleData
         }
-    end
-    
-    -- Build edges
-    for moduleName, node in pairs(graph.nodes) do
-        for _, depName in ipairs(node.dependencies) do
-            table.insert(graph.edges, {
-                from = depName,
-                to = moduleName
-            })
+        local dependencies = moduleData.manifest.dependencies or {}
+        for _, depName in ipairs(dependencies) do
+            table.insert(graph.edges, {from = depName, to = moduleName})
         end
     end
-    
     return graph
 end
 
-function DependencyResolver:TopologicalSort(graph)
-    local visited = {}
-    local tempMarked = {}
-    local result = {}
-    
-    local function visit(nodeName)
-        if tempMarked[nodeName] then
-            self.logger:Error("Circular dependency detected", {node = nodeName})
-            return false
-        end
-        
-        if not visited[nodeName] then
-            tempMarked[nodeName] = true
-            
-            -- Visit semua dependencies
-            for _, edge in ipairs(graph.edges) do
-                if edge.from == nodeName then
-                    if not visit(edge.to) then
-                        return false
-                    end
+function DependencyResolver:_detectCircularDependencies(graph)
+    local visited, recursionStack, circularPaths = {}, {}, {}
+    local function dfs(nodeName)
+        if not graph.nodes[nodeName] then return false end
+        visited[nodeName] = true
+        recursionStack[nodeName] = true
+        for _, edge in ipairs(graph.edges) do
+            if edge.from == nodeName then
+                local dependencyName = edge.to
+                if not graph.nodes[dependencyName] then
+                    self.logger:Warn("Missing dependency", {module = nodeName, missing = dependencyName})
+                elseif not visited[dependencyName] then
+                    if dfs(dependencyName) then return true end
+                elseif recursionStack[dependencyName] then
+                    table.insert(circularPaths, {from = nodeName, to = dependencyName})
+                    return true
                 end
             end
-            
-            tempMarked[nodeName] = false
-            visited[nodeName] = true
-            table.insert(result, 1, nodeName)
         end
-        
+        recursionStack[nodeName] = false
+        return false
+    end
+    for nodeName, _ in pairs(graph.nodes) do
+        if not visited[nodeName] then
+            if dfs(nodeName) then return true, circularPaths end
+        end
+    end
+    return false, {}
+end
+
+function DependencyResolver:_topologicalSort(graph)
+    local visited, tempMark, result = {}, {}, {}
+    local function visit(nodeName)
+        if tempMark[nodeName] then return false end
+        if not visited[nodeName] then
+            tempMark[nodeName] = true
+            for _, edge in ipairs(graph.edges) do
+                if edge.from == nodeName and graph.nodes[edge.to] then
+                    if not visit(edge.to) then return false end
+                end
+            end
+            tempMark[nodeName] = false
+            visited[nodeName] = true
+            local inserted = false
+            for i = 1, #result do
+                local existingNode = graph.nodes[result[i]]
+                local currentNode = graph.nodes[nodeName]
+                if currentNode.priority > existingNode.priority then
+                    table.insert(result, i, nodeName)
+                    inserted = true
+                    break
+                end
+            end
+            if not inserted then table.insert(result, nodeName) end
+        end
         return true
     end
-    
-    -- Visit semua nodes dengan priority sorting
-    local nodesByPriority = {}
-    for nodeName in pairs(graph.nodes) do
-        table.insert(nodesByPriority, {
-            name = nodeName,
-            priority = graph.nodes[nodeName].priority
-        })
+    for nodeName, _ in pairs(graph.nodes) do
+        if not visit(nodeName) then return nil end
     end
-    
-    table.sort(nodesByPriority, function(a, b)
-        return a.priority > b.priority
-    end)
-    
-    for _, node in ipairs(nodesByPriority) do
-        if not visited[node.name] then
-            if not visit(node.name) then
-                return nil
-            end
-        end
-    end
-    
     return result
 end
 
-function DependencyResolver:ResolveLoadOrder(modules)
-    self.logger:Info("Resolving dependency graph", {moduleCount = #modules})
-    
-    local graph = self:BuildDependencyGraph(modules)
-    local loadOrder = self:TopologicalSort(graph)
-    
-    if loadOrder then
-        self.logger:Info("Dependency resolution completed", {
-            loadOrder = table.concat(loadOrder, " → ")
-        })
+function DependencyResolver:Resolve(discoveredModules)
+    self.logger:Debug("Resolving dependencies", {moduleCount = #discoveredModules})
+    local graph = self:_buildDependencyGraph(discoveredModules)
+    local hasCircular, circularPaths = self:_detectCircularDependencies(graph)
+    if hasCircular then
+        self.logger:Error("Circular dependency detected!", {circularPaths = circularPaths})
+        return nil, "Circular dependency detected"
     end
-    
+    local loadOrder = self:_topologicalSort(graph)
+    if not loadOrder then
+        self.logger:Error("Failed to calculate load order")
+        return nil, "Failed to calculate load order"
+    end
+    self.logger:Info("Dependency resolution completed", {loadOrder = loadOrder, moduleCount = #loadOrder})
     return loadOrder
-end
-
--- ==================== LIFECYCLE METHODS ====================
-
-function DependencyResolver:Inject(services)
-    self.logger = services.LoggerService
-end
-
-function DependencyResolver:Init()
-    OVHL:_registerService("DependencyResolver", self)
-    self.logger:Info("DependencyResolver initialized")
-    return true
-end
-
-function DependencyResolver:Start()
-    self.logger:Info("DependencyResolver started successfully")
-    return true
 end
 
 return DependencyResolver

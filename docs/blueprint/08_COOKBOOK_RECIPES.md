@@ -2,16 +2,16 @@
 
 ### 📋 INFORMASI DOKUMEN
 
-| Properti           | Nilai                                            |
-| ------------------ | ------------------------------------------------ |
-| **ID Dokumen**     | `ARC-v1-008`                                     |
-| **Status**         | `Aktif (Rilis Baru)`                             |
-| **Lokasi Path**    | `./docs/blueprint/08_COOKBOOK_RECIPES.md`        |
-| **Tipe Dokumen**   | `Contoh Kode Praktis`                            |
-| **Target Audiens** | `All Developers, AI Assistant`                   |
-| **Relasi**         | `Index: 00_MASTER_BLUEPRINT_v1.md`, `Ref: 01-07` |
-| **Penulis**        | `OVHL Core Team (Direvisi oleh Gemini)`          |
-| **Dibuat**         | `29 Oktober 2025`                                |
+| Properti           | Nilai                                     |
+| ------------------ | ----------------------------------------- |
+| **ID Dokumen**     | `ARC-v1-008`                              |
+| **Status**         | `Aktif (Rilis Baru)`                      |
+| **Lokasi Path**    | `./docs/blueprint/08_COOKBOOK_RECIPES.md` |
+| **Tipe Dokumen**   | `Contoh Kode Praktis`                     |
+| **Target Audiens** | `All Developers, AI Assistant`            |
+| **Relasi**         | `Index: 00_MASTER_INDEX.md`, `Ref: 01-07` |
+| **Penulis**        | `OVHL Core Team (Direvisi oleh Gemini)`   |
+| **Dibuat**         | `29 Oktober 2025`                         |
 
 ---
 
@@ -627,6 +627,6 @@ return AchievementSystem
 
 ### 🔄 Riwayat Perubahan (Changelog)
 
-| Versi | Tanggal     | Penulis                 | Perubahan                                                                                                                                                                                        |
-| :---- | :---------- | :---------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 1.0.0 | 29 Okt 2025 | OVHL Core Team & Gemini | Rilis awal file detail Resep Koding v1. Dibuat dari hasil split `00_MASTER_BLUEPRINT_v1.md`. Mengupdate semua resep untuk menggunakan pola v1 (DI, UI Hooks, Coder/Builder, Networking v1 Aman). |
+| Versi | Tanggal     | Penulis                 | Perubahan                                                                                                                                                                                 |
+| :---- | :---------- | :---------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1.0.0 | 29 Okt 2025 | OVHL Core Team & Gemini | Rilis awal file detail Resep Koding v1. Dibuat dari hasil split `00_MASTER_INDEX.md`. Mengupdate semua resep untuk menggunakan pola v1 (DI, UI Hooks, Coder/Builder, Networking v1 Aman). |

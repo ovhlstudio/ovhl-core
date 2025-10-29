@@ -2,16 +2,16 @@
 
 ### 📋 INFORMASI DOKUMEN
 
-| Properti           | Nilai                                             |
-| ------------------ | ------------------------------------------------- |
-| **ID Dokumen**     | `ARC-v1-004`                                      |
-| **Status**         | `Aktif (Rilis Baru)`                              |
-| **Lokasi Path**    | `./docs/blueprint/04_UI_FRAMEWORK_HOOKS.md`       |
-| **Tipe Dokumen**   | `Detail Arsitektur UI & API Hooks`                |
-| **Target Audiens** | `UI Developers, Core Dev, AI Assistant`           |
-| **Relasi**         | `Index: 00_MASTER_BLUEPRINT_v1.md`, `Lib: Fusion` |
-| **Penulis**        | `OVHL Core Team (Direvisi oleh Gemini)`           |
-| **Dibuat**         | `29 Oktober 2025`                                 |
+| Properti           | Nilai                                       |
+| ------------------ | ------------------------------------------- |
+| **ID Dokumen**     | `ARC-v1-004`                                |
+| **Status**         | `Aktif (Rilis Baru)`                        |
+| **Lokasi Path**    | `./docs/blueprint/04_UI_FRAMEWORK_HOOKS.md` |
+| **Tipe Dokumen**   | `Detail Arsitektur UI & API Hooks`          |
+| **Target Audiens** | `UI Developers, Core Dev, AI Assistant`     |
+| **Relasi**         | `Index: 00_MASTER_INDEX.md`, `Lib: Fusion`  |
+| **Penulis**        | `OVHL Core Team (Direvisi oleh Gemini)`     |
+| **Dibuat**         | `29 Oktober 2025`                           |
 
 ---
 
@@ -389,6 +389,6 @@ Dengan pola ini, jika `ThemeController` mengubah _state_ `CurrentTheme` (misal d
 
 ### 🔄 Riwayat Perubahan (Changelog)
 
-| Versi | Tanggal     | Penulis                 | Perubahan                                                                                                                                                                  |
-| :---- | :---------- | :---------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 1.0.0 | 29 Okt 2025 | OVHL Core Team & Gemini | Rilis awal file detail UI Framework Hooks v1. Dibuat dari hasil split `00_MASTER_BLUEPRINT_v1.md`. Menjelaskan filosofi, API Fusion, template standar, dan sistem theming. |
+| Versi | Tanggal     | Penulis                 | Perubahan                                                                                                                                                           |
+| :---- | :---------- | :---------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| 1.0.0 | 29 Okt 2025 | OVHL Core Team & Gemini | Rilis awal file detail UI Framework Hooks v1. Dibuat dari hasil split `00_MASTER_INDEX.md`. Menjelaskan filosofi, API Fusion, template standar, dan sistem theming. |

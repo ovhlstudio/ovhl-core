@@ -8,6 +8,8 @@
 2. **Developer cuma execute 1 command:** `bash ./lokal/tools/run.sh`
 3. **run.sh handle semua:** validation, backup, deployment, verification
 4. **No manual copy-paste code**, no manual file creation
+5. Backup File : ./lokal/backups
+6. Test File Untuk Di Copy Ke Studio ada di folder ./test/[sesuaikan foldernya]
 
 ### **STRUCTURE RUN.SH:**
 
@@ -25,6 +27,7 @@
 # PHASE 2: BACKUP & PREPARATION
 # - Backup existing files location ./lokal/backups
 # - Create necessary directories
+# - Create Test File Studio ./test/[client / server / shared]
 
 # PHASE 3: DEPLOYMENT
 # - Deploy ALL needed files sekaligus
@@ -39,177 +42,625 @@ echo "🎉 Task OVHL-XXX COMPLETED!"
 echo "📝 Next: Update AI_DEV_LOG.md"
 ```
 
-## 🎯 STRATEGI: BOTTOM-UP DEVELOPMENT
-
-**Foundation → Core → Features → Polish**
+> **STRATEGI:** Bootstrap First → Foundation → Features → Polish
 
 ---
 
-## 🏗️ FASE 1: FOUNDATION & BOOTSTRAP [BLOCKED]
+## 🎯 PRINSIP PENGEMBANGAN
 
-**Tujuan:** Basic system yang SEMUA module butuhkan
+1. **BOOTSTRAP FIRST**: Bikin sistem yang bisa auto-detect module dulu
+2. **FOUNDATION SECOND**: Bikin core services yang semua butuhkan
+3. **FEATURES THIRD**: Bikin game modules & UI
+4. **POLISH LAST**: Optimasi & tooling
+
+---
+
+## 📊 CURRENT STATUS
+
+**Phase:** 🔨 BOOTSTRAP (0% Complete)  
+**Next Task:** OVHL-B001 (LoggerService)  
+**Blocked Tasks:** All (waiting for bootstrap)
+
+---
+
+## ⚡ FASE 0: BOOTSTRAP (Foundation Layer)
+
+**Tujuan:** Bikin sistem auto-discovery & lifecycle management
+
+### Why Bootstrap First?
+
+Karena SEMUA module lainnya akan di-load via sistem ini. Kalau bootstrap belum ada, kita harus manual require everything (anti-pattern).
 
 ### 📋 TASKS:
 
-- [x] **OVHL-008**: `OVHL_Global.lua` - Global API Accessor
-- [x] **OVHL-004**: `ConfigService.lua` - Configuration Management
-- [x] **OVHL-001**: `LoggerService.lua` - Structured Logging System
-- [x] **OVHL-005**: `DependencyResolver.lua` - Dependency Graph Solver
-- [x] **OVHL-006**: `ServiceManager.lua` - Auto-discovery Services
-- [x] **OVHL-007**: `ModuleLoader.lua` - Auto-discovery Modules
-- [x] **OVHL-002**: `init.server.lua` - Server Bootstrap
-- [x] **OVHL-009**: `init.client.lua` - Client Bootstrap
+#### **OVHL-B001**: LoggerService ⭐ START HERE
 
-### ✅ SUCCESS CRITERIA:
-
-1. Server bisa startup tanpa error
-2. Basic services ter-load otomatis
-3. Dependency injection work
-4. Logging system operational
+- **File:** `src/server/services/LoggerService.lua`
+- **Dependencies:** NONE (Pure Lua)
+- **Description:** Structured logging dengan level (Debug, Info, Warn, Error)
+- **Features:**
+  - Log levels filtering
+  - Timestamp formatting
+  - Context tracking (module name, etc)
+  - Output to console & file (future)
+- **Success Criteria:**
+  - Can log with different levels
+  - Can filter logs by level
+  - Can add context to logs
+- **Blockers:** NONE ✅ READY TO START
 
 ---
 
-## 🔧 FASE 2: CORE INFRASTRUCTURE [BLOCKED]
+#### **OVHL-B002**: DependencyResolver
 
-**Tujuan:** Communication & State Management
+- **File:** `src/server/services/DependencyResolver.lua`
+- **Dependencies:** Logger
+- **Description:** Resolve dependency graph & calculate load order
+- **Features:**
+  - Parse `__manifest.dependencies`
+  - Detect circular dependencies (fail fast)
+  - Topological sort for load order
+  - Priority-based ordering
+- **Success Criteria:**
+  - Can detect circular dependencies
+  - Can calculate correct load order
+  - Respects priority field
+- **Blockers:** OVHL-B001
+
+---
+
+#### **OVHL-B003**: init.server.lua (Server Bootstrap)
+
+- **File:** `src/server/init.server.lua`
+- **Dependencies:** Logger, DependencyResolver
+- **Description:** Server startup & auto-discovery orchestrator
+- **Features:**
+  - Manual load Logger & DependencyResolver
+  - Auto-scan `services/` folder
+  - Auto-scan `modules/` folder
+  - Validate `__manifest` for each
+  - Create instances in dependency order
+  - Call lifecycle methods (:Inject, :Init, :Start)
+  - Error handling (Fail Fast vs Fail Graceful)
+- **Success Criteria:**
+  - Server starts without errors
+  - Services auto-discovered and loaded
+  - Modules auto-discovered and loaded
+  - Dependency order respected
+  - Errors logged properly
+- **Blockers:** OVHL-B001, OVHL-B002
+
+---
+
+#### **OVHL-B004**: init.client.lua (Client Bootstrap)
+
+- **File:** `src/client/init.client.lua`
+- **Dependencies:** Logger (client copy), DependencyResolver (client copy)
+- **Description:** Client startup & auto-discovery orchestrator
+- **Features:**
+  - Same as server but for controllers/
+  - Auto-scan `controllers/` folder
+  - Auto-scan `modules/` folder (client UI modules)
+- **Success Criteria:**
+  - Client starts without errors
+  - Controllers auto-discovered
+  - Client modules auto-discovered
+- **Blockers:** OVHL-B001, OVHL-B002
+
+---
+
+#### **OVHL-B005**: OVHL_Global.lua (API Accessor)
+
+- **File:** `src/shared/OVHL_Global.lua`
+- **Dependencies:** Logger
+- **Description:** Global API `_G.OVHL` untuk akses services/modules
+- **Features:**
+  - `OVHL:GetService(name)`
+  - `OVHL:GetModule(name)`
+  - `OVHL:GetConfig(name)`
+  - `OVHL:Emit(event, ...)`
+  - `OVHL:Subscribe(event, callback)`
+  - `OVHL:Fire(remote, ...)` (client)
+  - `OVHL:Invoke(remote, ...)` (client)
+- **Success Criteria:**
+  - Can access services by name
+  - Can access modules by name
+  - API consistent between server/client
+- **Blockers:** OVHL-B003, OVHL-B004
+
+---
+
+### ✅ FASE 0 SUCCESS CRITERIA (ALL MUST PASS):
+
+1. ✅ Server dapat startup tanpa error
+2. ✅ Client dapat startup tanpa error
+3. ✅ Logger berfungsi di server & client
+4. ✅ Auto-discovery scan folders (services/, modules/, controllers/)
+5. ✅ Dependency resolution berfungsi (no circular deps)
+6. ✅ Lifecycle methods dipanggil dengan urutan benar
+7. ✅ `_G.OVHL` tersedia dan berfungsi
+8. ✅ Error handling (Fail Fast untuk critical, Fail Graceful untuk features)
+
+### 🚀 OUTPUT FASE 0:
+
+```
+📦 src/
+├── 📁 server/
+│   ├── 📄 init.server.lua          ✅ WORKS
+│   └── 📁 services/
+│       ├── 📄 LoggerService.lua    ✅ WORKS
+│       └── 📄 DependencyResolver.lua ✅ WORKS
+│
+├── 📁 client/
+│   ├── 📄 init.client.lua          ✅ WORKS
+│   └── 📁 controllers/
+│       ├── 📄 LoggerService.lua    ✅ WORKS (copy)
+│       └── 📄 DependencyResolver.lua ✅ WORKS (copy)
+│
+└── 📁 shared/
+    └── 📄 OVHL_Global.lua          ✅ WORKS
+```
+
+**AFTER FASE 0:** Semua module baru tinggal taruh di folder yang bener, auto-detect!
+
+---
+
+## 🏗️ FASE 1: CORE SERVICES (Foundation)
+
+**Tujuan:** Services yang SEMUA module butuhkan
+
+**BLOCKED UNTIL:** Fase 0 complete
 
 ### 📋 TASKS:
 
-- [ ] **OVHL-003**: `EventBusService.lua` - Internal Pub/Sub Server
-- [ ] **OVHL-014**: `RemoteManagerService.lua` - Client-Server Communication
-- [ ] **OVHL-015**: `NetworkSchema.lua` - Network Validation
-- [ ] **OVHL-010**: `Fusion Integration` - UI Framework Setup
-- [ ] **OVHL-011**: `StateManager.lua` - Global UI State
-- [ ] **OVHL-012**: `UIEngine.lua` - UI Component Manager
+#### **OVHL-001**: ConfigService
 
-### ✅ SUCCESS CRITERIA:
-
-1. EventBus bisa kirim/terima event
-2. Client-server communication work
-3. Network validation aktif
-4. UI framework siap dipakai
+- **File:** `src/server/services/ConfigService.lua`
+- **Dependencies:** Logger
+- **Description:** Manage game configuration (default & live)
+- **Features:**
+  - Read `__config` from modules
+  - Get/Set config by module name
+  - Emit "ConfigChanged" events
+  - Admin panel integration (future)
+- **Manifest:**
+  ```lua
+  name = "ConfigService"
+  version = "1.0.0"
+  type = "service"
+  dependencies = {"Logger"}
+  priority = 70
+  ```
+- **Blockers:** OVHL-B003
 
 ---
 
-## 🎮 FASE 3: GAME MODULES & FEATURES [BLOCKED]
+#### **OVHL-002**: EventBusService
 
-**Tujuan:** Actual Game Functionality
+- **File:** `src/server/services/EventBusService.lua`
+- **Dependencies:** Logger
+- **Description:** Internal pub/sub (server-only)
+- **Features:**
+  - Emit(eventName, ...)
+  - Subscribe(eventName, callback) → unsubscribe function
+  - Wildcard subscriptions (optional)
+  - Event history (debug mode)
+- **Manifest:**
+  ```lua
+  name = "EventBusService"
+  version = "1.0.0"
+  type = "service"
+  dependencies = {"Logger"}
+  priority = 70
+  ```
+- **Blockers:** OVHL-B003
+
+---
+
+#### **OVHL-003**: DataService
+
+- **File:** `src/server/services/DataService.lua`
+- **Dependencies:** Logger, ConfigService
+- **Description:** DataStore wrapper dengan session lock
+- **Features:**
+  - Get/Set player data
+  - Auto-save interval
+  - Session locking
+  - Retry logic
+  - Data migration support
+- **Manifest:**
+  ```lua
+  name = "DataService"
+  version = "1.0.0"
+  type = "service"
+  dependencies = {"Logger", "ConfigService"}
+  priority = 60
+  ```
+- **Blockers:** OVHL-001
+
+---
+
+### ✅ FASE 1 SUCCESS CRITERIA:
+
+1. ConfigService dapat load/save config
+2. EventBusService dapat emit/subscribe
+3. DataService dapat save/load player data
+4. Semua service ter-auto-discover
+5. No manual registration needed
+
+---
+
+## 🌐 FASE 2: NETWORKING (Client ↔ Server)
+
+**Tujuan:** Safe & fast client-server communication
+
+**BLOCKED UNTIL:** Fase 1 complete
 
 ### 📋 TASKS:
 
-- [ ] **MOD-TEST-01**: `TestService.lua` - Server-side Test Module
-- [ ] **MOD-TEST-02**: `TestController.lua` - Client-side Test Module
-- [ ] **MOD-TEST-03**: `TestUI.lua` - UI Test Component
-- [ ] **OVHL-013**: `ComponentService.lua` - Coder/Builder Workflow
-- [ ] **MOD-COMP-01**: `SpinningCoin.lua` - Example Component
-- [ ] **OVHL-023**: `DataService.lua` - Player Data Management
+#### **OVHL-004**: NetworkSchema.lua
 
-### ✅ SUCCESS CRITERIA:
-
-1. Test module server-client communication work
-2. UI components bisa render dan interaktif
-3. Coder/Builder workflow operational
-4. Player data bisa save/load
+- **File:** `src/shared/NetworkSchema.lua`
+- **Dependencies:** NONE (Pure schema)
+- **Description:** Validation schema untuk RemoteManager
+- **Features:**
+  - Define types untuk setiap remote
+  - Use 't' library for validation
+  - Type definitions (string, number, boolean, etc)
+- **Example:**
+  ```lua
+  NetworkSchema = {
+      ["Shop:BuyItem"] = {
+          t.string, -- itemName
+          t.integer -- quantity
+      }
+  }
+  ```
+- **Blockers:** OVHL-B005
 
 ---
 
-## 🧪 FASE 4: TESTING & INTEGRATION [BLOCKED]
+#### **OVHL-005**: RemoteManagerService
 
-**Tujuan:** End-to-end Testing & Validation
+- **File:** `src/server/services/RemoteManagerService.lua`
+- **Dependencies:** Logger, EventBus, NetworkSchema
+- **Description:** Server-side remote handler
+- **Features:**
+  - RegisterHandler(remoteName, handler)
+  - FireClient(player, remoteName, ...)
+  - FireAllClients(remoteName, ...)
+  - Middleware: Schema validation
+  - Middleware: Rate limiting
+  - Middleware: Error handling
+- **Manifest:**
+  ```lua
+  name = "RemoteManagerService"
+  version = "1.0.0"
+  type = "service"
+  dependencies = {"Logger", "EventBusService", "NetworkSchema"}
+  priority = 50
+  ```
+- **Blockers:** OVHL-002, OVHL-004
+
+---
+
+#### **OVHL-006**: RemoteClient
+
+- **File:** `src/client/controllers/RemoteClient.lua`
+- **Dependencies:** Logger (client), NetworkSchema
+- **Description:** Client-side remote caller
+- **Features:**
+  - Fire(remoteName, ...)
+  - Invoke(remoteName, ...) → Promise
+  - Listen(remoteName, callback)
+  - Error handling & retry
+- **Manifest:**
+  ```lua
+  name = "RemoteClient"
+  version = "1.0.0"
+  type = "controller"
+  dependencies = {"Logger"}
+  priority = 70
+  ```
+- **Blockers:** OVHL-B004, OVHL-004
+
+---
+
+### ✅ FASE 2 SUCCESS CRITERIA:
+
+1. Client dapat Fire/Invoke ke server
+2. Server dapat FireClient/FireAllClients
+3. Schema validation aktif
+4. Rate limiting mencegah spam
+5. Errors handled gracefully
+
+---
+
+## 🎨 FASE 3: UI FRAMEWORK (Client)
+
+**Tujuan:** Reactive UI dengan Fusion
+
+**BLOCKED UNTIL:** Fase 2 complete
 
 ### 📋 TASKS:
 
-- [ ] **TEST-01**: Server Module Integration Test
-- [ ] **TEST-02**: Client Module Integration Test
-- [ ] **TEST-03**: Network Communication Test
-- [ ] **TEST-04**: UI State Management Test
-- [ ] **TEST-05**: Component System Test
-- [ ] **OVHL-028**: Unit Test Coverage Setup
+#### **OVHL-007**: Fusion Integration (Wally)
 
-### ✅ SUCCESS CRITERIA:
-
-1. Semua core systems ter-integrasi dengan baik
-2. Network communication stable
-3. UI responsive dan interactive
-4. Component system work seperti expected
+- **File:** `wally.toml` → `src/shared/lib/fusion/`
+- **Dependencies:** External (Wally package)
+- **Description:** Install Fusion via Wally
+- **Commands:**
+  ```bash
+  wally install
+  rojo build
+  ```
+- **Blockers:** OVHL-B004
 
 ---
 
-## 🚀 FASE 5: ADVANCED FEATURES [BLOCKED]
+#### **OVHL-008**: StateManager
 
-**Tujuan:** Production-ready Features
+- **File:** `src/client/controllers/StateManager.lua`
+- **Dependencies:** Logger (client), Fusion
+- **Description:** Global UI state management
+- **Features:**
+  - Create reactive states (Fusion.Value)
+  - Computed states (Fusion.Computed)
+  - State persistence (optional)
+- **Manifest:**
+  ```lua
+  name = "StateManager"
+  version = "1.0.0"
+  type = "controller"
+  dependencies = {"Logger"}
+  priority = 60
+  ```
+- **Blockers:** OVHL-007
+
+---
+
+#### **OVHL-009**: UIEngine
+
+- **File:** `src/client/controllers/UIEngine.lua`
+- **Dependencies:** Logger (client), StateManager, Fusion
+- **Description:** UI component manager
+- **Features:**
+  - Mount/Unmount UI components
+  - Component lifecycle
+  - Props & state management
+- **Manifest:**
+  ```lua
+  name = "UIEngine"
+  version = "1.0.0"
+  type = "controller"
+  dependencies = {"Logger", "StateManager"}
+  priority = 50
+  ```
+- **Blockers:** OVHL-008
+
+---
+
+#### **OVHL-010**: ThemeController
+
+- **File:** `src/client/controllers/ThemeController.lua`
+- **Dependencies:** StateManager
+- **Description:** Theme system (light/dark mode)
+- **Features:**
+  - Define theme colors
+  - Switch theme at runtime
+  - Reactive theme changes
+- **Manifest:**
+  ```lua
+  name = "ThemeController"
+  version = "1.0.0"
+  type = "controller"
+  dependencies = {"StateManager"}
+  priority = 40
+  ```
+- **Blockers:** OVHL-008
+
+---
+
+### ✅ FASE 3 SUCCESS CRITERIA:
+
+1. Fusion ter-import dengan benar
+2. StateManager dapat create reactive states
+3. UIEngine dapat mount/unmount components
+4. Theme switching work
+5. UI reactive to state changes
+
+---
+
+## 🧪 FASE 4: TEST MODULES (Validation)
+
+**Tujuan:** End-to-end test full stack
+
+**BLOCKED UNTIL:** Fase 3 complete
 
 ### 📋 TASKS:
 
-- [ ] **OVHL-016**: Rate Limiting - Security Enhancement
-- [ ] **OVHL-020**: Network Batching - Performance
-- [ ] **OVHL-021**: Network Caching - Performance
-- [ ] **OVHL-022**: Network Monitoring - Analytics
-- [ ] **OVHL-018**: Hot Reloading - Developer Experience
-- [ ] **OVHL-025**: Admin Panel - Management Tools
+#### **MOD-001**: TestService
 
-### ✅ SUCCESS CRITERIA:
-
-1. Security features aktif
-2. Performance optimization implemented
-3. Monitoring system operational
-4. Developer tools ready
+- **File:** `src/server/modules/TestService.lua`
+- **Dependencies:** Logger, EventBusService, RemoteManagerService
+- **Description:** Server test module
+- **Features:**
+  - Register remote handler "Test:Ping"
+  - Emit event "TestEvent"
+  - Return data to client
+- **Manifest:**
+  ```lua
+  name = "TestService"
+  version = "1.0.0"
+  type = "module"
+  dependencies = {"Logger", "EventBusService", "RemoteManagerService"}
+  ```
 
 ---
 
-## 🛠️ FASE 6: TOOLING & DEPLOY [BLOCKED]
+#### **MOD-002**: TestController
 
-**Tujuan:** Production Deployment & Maintenance
+- **File:** `src/client/modules/TestController.lua`
+- **Dependencies:** Logger, RemoteClient, StateManager
+- **Description:** Client test module
+- **Features:**
+  - Invoke "Test:Ping"
+  - Listen to "TestEvent"
+  - Update state with response
+- **Manifest:**
+  ```lua
+  name = "TestController"
+  version = "1.0.0"
+  type = "module"
+  dependencies = {"Logger", "RemoteClient", "StateManager"}
+  ```
+
+---
+
+#### **MOD-003**: TestUI
+
+- **File:** `src/client/modules/TestUI.lua`
+- **Dependencies:** UIEngine, ThemeController, TestController
+- **Description:** UI test component
+- **Features:**
+  - Button: "Ping Server"
+  - Label: Display response
+  - Theme toggle button
+- **Manifest:**
+  ```lua
+  name = "TestUI"
+  version = "1.0.0"
+  type = "module"
+  dependencies = {"UIEngine", "ThemeController", "TestController"}
+  ```
+
+---
+
+### ✅ FASE 4 SUCCESS CRITERIA:
+
+1. Button click → Invoke server
+2. Server respond → Update UI
+3. Event from server → UI reacts
+4. Theme toggle → UI changes
+5. Full stack communication confirmed
+
+---
+
+## 🧩 FASE 5: CODER/BUILDER WORKFLOW
+
+**Tujuan:** Tag-based component system
+
+**BLOCKED UNTIL:** Fase 4 complete
 
 ### 📋 TASKS:
 
-- [ ] **OVHL-017**: CLI Generators - Developer Tools
-- [ ] **OVHL-026**: Advanced CLI Features
-- [ ] **OVHL-029**: Documentation Complete
-- [ ] **OVHL-030**: Performance Benchmarking
-- [ ] **DEPLOY-01**: Production Build & Test
-- [ ] **DEPLOY-02**: Live Environment Validation
+#### **OVHL-011**: ComponentService
 
-### ✅ SUCCESS CRITERIA:
-
-1. CLI tools productive
-2. Documentation comprehensive
-3. Performance metrics memenuhi target
-4. Siap deploy ke production
-
----
-
-## 🔄 CURRENT STATUS: **FASE 1 - IN PROGRESS**
-
-### 🎯 NOW WORKING ON: **OVHL-008 - OVHL_Global.lua**
-
-**Blockers:** None - Ready to start!
-
-### 📝 NEXT UP AFTER THIS:
-
-1. OVHL-004: ConfigService
-2. OVHL-001: LoggerService
-3. OVHL-005: DependencyResolver
+- **File:** `src/server/services/ComponentService.lua`
+- **Dependencies:** Logger, EventBusService
+- **Description:** Auto-knit components via CollectionService tags
+- **Features:**
+  - Scan for `ovhl:component` attribute
+  - Auto-require component from `shared/components/`
+  - Call `:Knit(instance)` when tagged
+  - Call `:Destroy()` when untagged
+- **Manifest:**
+  ```lua
+  name = "ComponentService"
+  version = "1.0.0"
+  type = "service"
+  dependencies = {"Logger", "EventBusService"}
+  priority = 40
+  ```
 
 ---
 
-## 🎪 SPECIAL PHASES:
+#### **MOD-COMP-001**: SpinningCoin
 
-### 🧪 **TEST MODULES PHASE** (Fase 3)
-
-- TestService (Server) ↔ TestController (Client) ↔ TestUI (Interface)
-- Validasi full stack communication
-- Jadi blueprint untuk module development
-
-### 🔧 **TOOLING PHASE** (Fase 6)
-
-- `create:service` - Generate service template
-- `create:module` - Generate game module
-- `create:component` - Generate coder/builder component
-- `create:ui` - Generate UI component
+- **File:** `src/shared/components/SpinningCoin.lua`
+- **Description:** Example component (rotating coin)
+- **Features:**
+  - :Knit(part) → Start rotation
+  - :Destroy() → Stop rotation
+- **Manifest:**
+  ```lua
+  name = "SpinningCoin"
+  version = "1.0.0"
+  type = "component"
+  dependencies = {}
+  ```
 
 ---
 
-## 🚨 DEPENDENCY CHAIN YANG BENER:
+### ✅ FASE 5 SUCCESS CRITERIA:
 
-> OVHL_Global → ConfigService → LoggerService → DependencyResolver → ServiceManager → ModuleLoader → init.server → EventBus → RemoteManager → Fusion → StateManager → TestModules → Advanced Features
+1. Builder tag Part with `ovhl:component = "SpinningCoin"`
+2. Component auto-knit
+3. Coin rotates
+4. Remove tag → rotation stops
+5. Multiple instances work
+
+---
+
+## 🚀 FASE 6: ADVANCED FEATURES
+
+**Tujuan:** Production-ready enhancements
+
+**BLOCKED UNTIL:** Fase 5 complete
+
+### 📋 TASKS:
+
+- **OVHL-012**: Rate Limiting Enhancement
+- **OVHL-013**: Network Batching
+- **OVHL-014**: Network Caching
+- **OVHL-015**: Network Monitoring
+- **OVHL-016**: Hot Reloading (Dev)
+- **OVHL-017**: Admin Panel Module
+
+---
+
+## 🛠️ FASE 7: DEVELOPER TOOLS
+
+**Tujuan:** CLI & SDK
+
+**BLOCKED UNTIL:** Fase 6 complete
+
+### 📋 TASKS:
+
+- **OVHL-018**: CLI Generator (create:service, create:module, create:component)
+- **OVHL-019**: Documentation Generator
+- **OVHL-020**: Performance Profiler
+
+---
+
+## 📊 SUMMARY
+
+| Fase              | Tasks | Dependencies | Status         |
+| ----------------- | ----- | ------------ | -------------- |
+| 0 - Bootstrap     | 5     | None         | 🔨 IN PROGRESS |
+| 1 - Core Services | 3     | Fase 0       | ⏸️ BLOCKED     |
+| 2 - Networking    | 3     | Fase 1       | ⏸️ BLOCKED     |
+| 3 - UI Framework  | 4     | Fase 2       | ⏸️ BLOCKED     |
+| 4 - Test Modules  | 3     | Fase 3       | ⏸️ BLOCKED     |
+| 5 - Components    | 2     | Fase 4       | ⏸️ BLOCKED     |
+| 6 - Advanced      | 6     | Fase 5       | ⏸️ BLOCKED     |
+| 7 - Tooling       | 3     | Fase 6       | ⏸️ BLOCKED     |
+
+---
+
+## 🎯 NEXT ACTION
+
+**START:** OVHL-B001 (LoggerService)
+
+**WHY THIS FIRST?**
+Karena ini adalah foundation dari foundation. Semua module butuh logging. Tanpa logger, debugging jadi nightmare.
+
+**COMMAND:**
+
+```bash
+bash ./lokal/tools/run.sh OVHL-B001
+```
+
+---
+
+**END OF ROADMAP**

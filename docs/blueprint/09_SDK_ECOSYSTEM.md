@@ -2,16 +2,16 @@
 
 ### 📋 INFORMASI DOKUMEN
 
-| Properti           | Nilai                                            |
-| ------------------ | ------------------------------------------------ |
-| **ID Dokumen**     | `ARC-v1-009`                                     |
-| **Status**         | `Aktif (Rilis Baru)`                             |
-| **Lokasi Path**    | `./docs/blueprint/09_SDK_ECOSYSTEM.md`           |
-| **Tipe Dokumen**   | `Visi Jangka Panjang & Strategi Ekosistem`       |
-| **Target Audiens** | `Core Team, Product Team, AI Assistant`          |
-| **Relasi**         | `Index: 00_MASTER_BLUEPRINT_v1.md`, `Ref: 01-08` |
-| **Penulis**        | `OVHL Core Team (Direvisi oleh Gemini)`          |
-| **Dibuat**         | `29 Oktober 2025`                                |
+| Properti           | Nilai                                      |
+| ------------------ | ------------------------------------------ |
+| **ID Dokumen**     | `ARC-v1-009`                               |
+| **Status**         | `Aktif (Rilis Baru)`                       |
+| **Lokasi Path**    | `./docs/blueprint/09_SDK_ECOSYSTEM.md`     |
+| **Tipe Dokumen**   | `Visi Jangka Panjang & Strategi Ekosistem` |
+| **Target Audiens** | `Core Team, Product Team, AI Assistant`    |
+| **Relasi**         | `Index: 00_MASTER_INDEX.md`, `Ref: 01-08`  |
+| **Penulis**        | `OVHL Core Team (Direvisi oleh Gemini)`    |
+| **Dibuat**         | `29 Oktober 2025`                          |
 
 ---
 
@@ -127,6 +127,6 @@ Pola yang sama bisa digunakan untuk mengaktifkan/menonaktifkan fitur, memulai _e
 
 ### 🔄 Riwayat Perubahan (Changelog)
 
-| Versi | Tanggal     | Penulis                 | Perubahan                                                                                                                                                                   |
-| :---- | :---------- | :---------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 1.0.0 | 29 Okt 2025 | OVHL Core Team & Gemini | Rilis awal file detail Strategi Ekosistem & SDK v1. Dibuat dari hasil split `00_MASTER_BLUEPRINT_v1.md`. Menjelaskan bagaimana arsitektur v1 mendukung visi jangka panjang. |
+| Versi | Tanggal     | Penulis                 | Perubahan                                                                                                                                                            |
+| :---- | :---------- | :---------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1.0.0 | 29 Okt 2025 | OVHL Core Team & Gemini | Rilis awal file detail Strategi Ekosistem & SDK v1. Dibuat dari hasil split `00_MASTER_INDEX.md`. Menjelaskan bagaimana arsitektur v1 mendukung visi jangka panjang. |

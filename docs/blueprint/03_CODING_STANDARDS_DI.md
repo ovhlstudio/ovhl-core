@@ -2,17 +2,17 @@
 
 ### 📋 INFORMASI DOKUMEN
 
-| Properti            | Nilai                                                              |
-| ------------------- | ------------------------------------------------------------------ |
-| **ID Dokumen**      | `ARC-v1-003`                                                       |
-| **Status**          | `Aktif (Revisi 1.0.1)`                                             |
-| **Lokasi Path**     | `./docs/blueprint/03_CODING_STANDARDS_DI.md`                       |
-| **Tipe Dokumen**    | `Standar Koding & Pola DI`                                         |
-| **Target Audiens**  | `All Developers, AI Assistant`                                     |
-| **Relasi**          | `Index: 00_MASTER_BLUEPRINT_v1.md`, `Ref: 01_ARCHITECTURE_CORE.md` |
-| **Penulis**         | `OVHL Core Team (Direvisi oleh Gemini)`                            |
-| **Dibuat**          | `29 Oktober 2025`                                                  |
-| **Update Terakhir** | `29 Oktober 2025`                                                  |
+| Properti            | Nilai                                                       |
+| ------------------- | ----------------------------------------------------------- |
+| **ID Dokumen**      | `ARC-v1-003`                                                |
+| **Status**          | `Aktif (Revisi 1.0.1)`                                      |
+| **Lokasi Path**     | `./docs/blueprint/03_CODING_STANDARDS_DI.md`                |
+| **Tipe Dokumen**    | `Standar Koding & Pola DI`                                  |
+| **Target Audiens**  | `All Developers, AI Assistant`                              |
+| **Relasi**          | `Index: 00_MASTER_INDEX.md`, `Ref: 01_ARCHITECTURE_CORE.md` |
+| **Penulis**         | `OVHL Core Team (Direvisi oleh Gemini)`                     |
+| **Dibuat**          | `29 Oktober 2025`                                           |
+| **Update Terakhir** | `29 Oktober 2025`                                           |
 
 ---
 
@@ -577,4 +577,4 @@ return MathUtils
 | Versi | Tanggal     | Penulis                 | Perubahan                                                                                                                                                         |
 | :---- | :---------- | :---------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 1.0.1 | 29 Okt 2025 | OVHL Core Team & Gemini | Memperbaiki nomor heading untuk bagian Standar Error Handling menjadi 3.4 (sebelumnya salah 4). Menambahkan bagian 3.5 untuk Standar Konfigurasi Global vs Lokal. |
-| 1.0.0 | 29 Okt 2025 | OVHL Core Team & Gemini | Rilis awal file detail Standar Koding & DI v1. Dibuat dari hasil split `00_MASTER_BLUEPRINT_v1.md`.                                                               |
+| 1.0.0 | 29 Okt 2025 | OVHL Core Team & Gemini | Rilis awal file detail Standar Koding & DI v1. Dibuat dari hasil split `00_MASTER_INDEX.md`.                                                                      |
