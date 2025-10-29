@@ -2,16 +2,16 @@
 
 ### 📋 INFORMASI DOKUMEN
 
-| Properti           | Nilai                                            |
-| ------------------ | ------------------------------------------------ |
-| **ID Dokumen**     | `ARC-v1-010`                                     |
-| **Status**         | `Aktif (Rilis Baru)`                             |
-| **Lokasi Path**    | `./docs/blueprint/10_TROUBLESHOOTING_FAQ.md`     |
-| **Tipe Dokumen**   | `Panduan Pemecahan Masalah`                      |
-| **Target Audiens** | `All Developers, AI Assistant`                   |
-| **Relasi**         | `Index: 00_MASTER_BLUEPRINT_v1.md`, `Ref: 01-09` |
-| **Penulis**        | `OVHL Core Team (Direvisi oleh Gemini)`          |
-| **Dibuat**         | `29 Oktober 2025`                                |
+| Properti           | Nilai                                        |
+| ------------------ | -------------------------------------------- |
+| **ID Dokumen**     | `ARC-v1-010`                                 |
+| **Status**         | `Aktif (Rilis Baru)`                         |
+| **Lokasi Path**    | `./docs/blueprint/10_TROUBLESHOOTING_FAQ.md` |
+| **Tipe Dokumen**   | `Panduan Pemecahan Masalah`                  |
+| **Target Audiens** | `All Developers, AI Assistant`               |
+| **Relasi**         | `Index: 00_MASTER_INDEX.md`, `Ref: 01-09`    |
+| **Penulis**        | `OVHL Core Team (Direvisi oleh Gemini)`      |
+| **Dibuat**         | `29 Oktober 2025`                            |
 
 ---
 

@@ -1,143 +1,179 @@
---[[
-    File: src/shared/OVHL_Global.lua  
-    Tujuan: Global API accessor untuk OVHL framework - REAL IMPLEMENTATION
-    Versi Modul: 3.0.0
---]]
+local OVHLGlobal = {}
+OVHLGlobal.__index = OVHLGlobal
 
-local OVHL = {}
-OVHL.CORE_VERSION = "3.0.0"
-
--- Real storage untuk framework
-OVHL._services = {}
-OVHL._configs = {}
-OVHL._eventListeners = {}
-OVHL._state = {}
-
--- Helper function
-local function getTableKeys(tbl)
-    local keys = {}
-    for key in pairs(tbl or {}) do
-        table.insert(keys, key)
-    end
-    return keys
-end
-
--- ==================== CORE API ====================
-
-function OVHL:GetConfig(moduleName)
-    local configService = self._services.ConfigService
-    if configService then
-        return configService:GetConfig(moduleName)
-    end
-    return self._configs[moduleName] or {}
-end
-
-function OVHL:GetService(serviceName)
-    return self._services[serviceName]
-end
-
-function OVHL:GetAllServices()
-    return self._services
-end
-
--- ==================== EVENT BUS ====================
-
-function OVHL:Emit(eventName, ...)
-    if self._eventListeners[eventName] then
-        for _, callback in ipairs(self._eventListeners[eventName]) do
-            local success, err = pcall(callback, ...)
-            if not success then
-                warn("[OVHL] Event handler error: " .. tostring(err))
-            end
-        end
-    end
-end
-
-function OVHL:Subscribe(eventName, callback)
-    if not self._eventListeners[eventName] then
-        self._eventListeners[eventName] = {}
-    end
+function OVHLGlobal.new(config)
+    local self = setmetatable({}, OVHLGlobal)
     
-    table.insert(self._eventListeners[eventName], callback)
+    self._services = config.services or {}
+    self._modules = config.modules or {}
+    self._controllers = config.controllers or {}
+    self._logger = config.logger
+    self._isClient = config.isClient or false
     
-    return function()
-        if self._eventListeners[eventName] then
-            for i, cb in ipairs(self._eventListeners[eventName]) do
-                if cb == callback then
-                    table.remove(self._eventListeners[eventName], i)
-                    break
-                end
-            end
-        end
+    self._logger:Info("OVHL Global API initialized", {isClient = self._isClient})
+    
+    return self
+end
+
+function OVHLGlobal:GetService(serviceName)
+    if self._isClient then
+        return self._controllers[serviceName] or self._services[serviceName]
+    else
+        return self._services[serviceName]
     end
 end
 
--- ==================== CLIENT API ====================
-
-function OVHL:SetState(key, value)
-    self._state[key] = value
-    self:Emit("StateChanged", key, value)
+function OVHLGlobal:GetModule(moduleName)
+    return self._modules[moduleName]
 end
 
-function OVHL:GetState(key, defaultValue)
-    return self._state[key] or defaultValue
-end
-
-function OVHL:Fire(remoteName, ...)
-    -- TODO: Implement dengan RemoteManager
-    print("[OVHL] Fire: " .. remoteName .. " | Args: " .. tostring(#{...}))
-end
-
-function OVHL:Invoke(remoteName, ...)
-    -- TODO: Implement dengan RemoteManager  
-    print("[OVHL] Invoke: " .. remoteName .. " | Args: " .. tostring(#{...}))
+function OVHLGlobal:GetConfig(moduleName)
+    local module = self:GetService(moduleName) or self:GetModule(moduleName)
+    if module and module.__config then
+        return module.__config
+    end
     return nil
 end
 
-function OVHL:Listen(remoteName, callback)
-    -- TODO: Implement dengan RemoteManager
-    print("[OVHL] Listen: " .. remoteName)
-    return { Disconnect = function() end }
-end
-
--- ==================== FRAMEWORK INTERNAL ====================
-
-function OVHL:_registerService(serviceName, serviceInstance)
-    self._services[serviceName] = serviceInstance
-end
-
-function OVHL:_registerConfig(moduleName, config)
-    self._configs[moduleName] = config
-end
-
-function OVHL:_getServiceCount()
-    return #getTableKeys(self._services)
-end
-
-function OVHL:_getConfigCount()
-    return #getTableKeys(self._configs)
-end
-
--- ==================== DEBUG UTILITIES ====================
-
-function OVHL:DebugDump()
-    print("=== OVHL DEBUG DUMP ===")
-    print("Version: " .. self.CORE_VERSION)
-    print("Services: " .. self:_getServiceCount())
-    for name, service in pairs(self._services) do
-        print("  - " .. name)
+function OVHLGlobal:Emit(eventName, ...)
+    if self._isClient then
+        self._logger:Warn("Emit is server-only, use Fire/Invoke for client-server communication")
+        return
     end
     
-    print("Configs: " .. self:_getConfigCount())
-    for name, config in pairs(self._configs) do
-        print("  - " .. name)
+    local eventBus = self:GetService("EventBusService")
+    if eventBus and eventBus.Emit then
+        eventBus:Emit(eventName, ...)
+    else
+        self._logger:Warn("EventBusService not available for event: " .. tostring(eventName))
     end
-    
-    print("Event Listeners: " .. #getTableKeys(self._eventListeners))
-    for event, listeners in pairs(self._eventListeners) do
-        print("  - " .. event .. " (" .. #listeners .. " listeners)")
-    end
-    print("========================")
 end
 
-return OVHL
+function OVHLGlobal:Subscribe(eventName, callback)
+    if self._isClient then
+        self._logger:Warn("Subscribe is server-only, use Listen for client-server communication")
+        return function() end
+    end
+    
+    local eventBus = self:GetService("EventBusService")
+    if eventBus and eventBus.Subscribe then
+        return eventBus:Subscribe(eventName, callback)
+    else
+        self._logger:Warn("EventBusService not available for subscription: " .. tostring(eventName))
+        return function() end
+    end
+end
+
+function OVHLGlobal:Fire(remoteName, ...)
+    if not self._isClient then
+        self._logger:Warn("Fire is client-only, use Emit for server internal events")
+        return
+    end
+    
+    local remoteClient = self:GetService("RemoteClient")
+    if remoteClient and remoteClient.Fire then
+        remoteClient:Fire(remoteName, ...)
+    else
+        self._logger:Warn("RemoteClient not available for remote: " .. tostring(remoteName))
+    end
+end
+
+function OVHLGlobal:Invoke(remoteName, ...)
+    if not self._isClient then
+        self._logger:Warn("Invoke is client-only")
+        return nil
+    end
+    
+    local remoteClient = self:GetService("RemoteClient")
+    if remoteClient and remoteClient.Invoke then
+        return remoteClient:Invoke(remoteName, ...)
+    else
+        self._logger:Warn("RemoteClient not available for remote: " .. tostring(remoteName))
+        return nil
+    end
+end
+
+function OVHLGlobal:Listen(remoteName, callback)
+    if not self._isClient then
+        self._logger:Warn("Listen is client-only")
+        return function() end
+    end
+    
+    local remoteClient = self:GetService("RemoteClient")
+    if remoteClient and remoteClient.Listen then
+        return remoteClient:Listen(remoteName, callback)
+    else
+        self._logger:Warn("RemoteClient not available for listening: " .. tostring(remoteName))
+        return function() end
+    end
+end
+
+function OVHLGlobal:SetState(key, value)
+    if not self._isClient then
+        self._logger:Warn("SetState is client-only")
+        return
+    end
+    
+    local stateManager = self:GetService("StateManager")
+    if stateManager and stateManager.SetState then
+        stateManager:SetState(key, value)
+    else
+        self._logger:Warn("StateManager not available for state: " .. tostring(key))
+    end
+end
+
+function OVHLGlobal:GetState(key)
+    if not self._isClient then
+        self._logger:Warn("GetState is client-only")
+        return nil
+    end
+    
+    local stateManager = self:GetService("StateManager")
+    if stateManager and stateManager.GetState then
+        return stateManager:GetState(key)
+    else
+        self._logger:Warn("StateManager not available for state: " .. tostring(key))
+        return nil
+    end
+end
+
+function OVHLGlobal:SubscribeState(key, callback)
+    if not self._isClient then
+        self._logger:Warn("SubscribeState is client-only")
+        return function() end
+    end
+    
+    local stateManager = self:GetService("StateManager")
+    if stateManager and stateManager.Subscribe then
+        return stateManager:Subscribe(key, callback)
+    else
+        self._logger:Warn("StateManager not available for state subscription: " .. tostring(key))
+        return function() end
+    end
+end
+
+function OVHLGlobal:GetAllServices()
+    return self._services
+end
+
+function OVHLGlobal:GetAllModules()
+    return self._modules
+end
+
+function OVHLGlobal:GetAllControllers()
+    return self._controllers
+end
+
+function OVHLGlobal:IsClient()
+    return self._isClient
+end
+
+function OVHLGlobal:IsServer()
+    return not self._isClient
+end
+
+function OVHLGlobal:GetLogger()
+    return self._logger
+end
+
+return OVHLGlobal
