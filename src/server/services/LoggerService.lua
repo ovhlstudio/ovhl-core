@@ -8,17 +8,24 @@ LoggerService.__manifest = {
     dependencies = {},
     priority = 100,
     domain = "core",
-    description = "Structured logging service"
+    description = "Structured logging service dengan EMOJI!"
 }
 
 LoggerService.__config = {
     LogLevel = "INFO",
     EnableTimestamps = true,
     EnableContext = true,
-    OutputToConsole = true
+    OutputToConsole = true,
+    EnableEmojis = true  -- NEW: EMOJI FEATURE!
 }
 
 local LOG_LEVELS = {DEBUG = 10, INFO = 20, WARN = 30, ERROR = 40, NONE = 100}
+local EMOJI_MAP = {  -- NEW: EMOJI MAPPING!
+    DEBUG = "🔍",
+    INFO = "ℹ️", 
+    WARN = "⚠️",
+    ERROR = "❌"
+}
 
 function LoggerService.new()
     local self = setmetatable({}, LoggerService)
@@ -29,26 +36,32 @@ end
 
 function LoggerService:Inject(services) end
 
-function LoggerService:Init()
-    self:Info("LoggerService initialized")
-    return true
+function LoggerService:Init() 
+    self:Info("🔧 LoggerService initialized")
+    return true 
 end
 
-function LoggerService:Start()
-    self:Debug("LoggerService started")
+function LoggerService:Start() 
+    self:Debug("🚀 LoggerService started") 
 end
 
-function LoggerService:_shouldLog(level)
-    return LOG_LEVELS[level] >= self._currentLevel
-end
+function LoggerService:_shouldLog(level) return LOG_LEVELS[level] >= self._currentLevel end
 
 function LoggerService:_formatMessage(level, message, context)
     local parts = {}
+    
+    -- EMOJI FEATURE!
+    if self._config.EnableEmojis and EMOJI_MAP[level] then
+        table.insert(parts, EMOJI_MAP[level])
+    end
+    
     if self._config.EnableTimestamps then
         table.insert(parts, "[" .. os.date("%H:%M:%S") .. "]")
     end
+    
     table.insert(parts, "[" .. level .. "]")
     table.insert(parts, message)
+    
     if self._config.EnableContext and context and next(context) then
         local contextStr = ""
         for key, value in pairs(context) do
@@ -57,15 +70,14 @@ function LoggerService:_formatMessage(level, message, context)
         end
         table.insert(parts, "{" .. contextStr .. "}")
     end
+    
     return table.concat(parts, " ")
 end
 
 function LoggerService:_output(level, message, context)
     if not self:_shouldLog(level) then return end
     local formatted = self:_formatMessage(level, message, context)
-    if self._config.OutputToConsole then
-        print(formatted)
-    end
+    if self._config.OutputToConsole then print(formatted) end
 end
 
 function LoggerService:Debug(message, context) self:_output("DEBUG", message, context) end

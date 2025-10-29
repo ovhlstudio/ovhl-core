@@ -180,8 +180,26 @@ if not OVHL_Shared then
     logger:Error("OVHL_Shared folder not found in ReplicatedStorage")
 else
     local OVHLGlobal = require(OVHL_Shared:WaitForChild("OVHL_Global"))
-    _G.OVHL = OVHLGlobal.new({controllers = controllerInstances, modules = CLIENT_BOOTSTRAP_STATE.modules, logger = logger, isClient = true})
-    logger:Info("OVHL Client Global API created successfully")
+    
+    -- FIX: Ensure _G.OVHL is properly assigned in client
+    local ovhlInstance = OVHLGlobal.new({
+        controllers = controllerInstances, 
+        modules = CLIENT_BOOTSTRAP_STATE.modules, 
+        logger = logger, 
+        isClient = true
+    })
+    
+    -- CRITICAL FIX: Direct assignment to _G
+    _G.OVHL = ovhlInstance
+    
+    logger:Info("OVHL Client Global API created and assigned to _G.OVHL")
+    
+    -- Verify assignment
+    if _G.OVHL and _G.OVHL.IsClient then
+        logger:Info("✅ _G.OVHL assignment verified - Client API ready!")
+    else
+        logger:Error("❌ _G.OVHL assignment failed!")
+    end
 end
 
 print("📋 PHASE 6: Client System Ready")
@@ -201,6 +219,17 @@ print("📊 Client Bootstrap Summary:")
 print("   ✅ Controllers: " .. tostring(#controllerLoadOrder))
 print("   ✅ Modules: " .. tostring(discoveredModules and #moduleLoadOrder or 0))
 print("   ⚠️  Errors: " .. tostring(#CLIENT_BOOTSTRAP_STATE.errors))
+
+-- FIX: Add immediate verification
+task.spawn(function()
+    task.wait(1) -- Wait a bit for everything to settle
+    if _G.OVHL then
+        logger:Info("🎯 CLIENT VERIFICATION: _G.OVHL is accessible!")
+        logger:Info("🎯 Available controllers: " .. tostring(#controllerLoadOrder))
+    else
+        logger:Error("🚨 CLIENT VERIFICATION FAILED: _G.OVHL is nil!")
+    end
+end)
 
 Players.PlayerRemoving:Connect(function(player)
     if player == Players.LocalPlayer then

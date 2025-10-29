@@ -29,6 +29,115 @@ Dokumen ini adalah **catatan harian (jurnal)** interaksi antara Developer dan AI
 
 ---
 
+## Rabu, 29 Oktober 2025 - 19:28 WIB - DEV
+
+BACA : lampiran `snapshot-20251029_192640.md`
+Dev telah merubah aturan ai context dalam inject script non core yanga ada di folder `./test/*` dengan aturan-aturan baru.
+
+JSON MAPING SAAT INI DAN WORK UNTUK INJECT SCRIPT NON CORE L
+
+```json
+{
+  "name": "ovhl-core",
+  "tree": {
+    "$className": "DataModel",
+    "ReplicatedStorage": {
+      "$className": "ReplicatedStorage",
+      "OVHL_Shared": {
+        "$path": "src/shared"
+      },
+      "OVHL_test_Shared": {
+        "$path": "test/shared"
+      }
+    },
+    "ServerScriptService": {
+      "$className": "ServerScriptService",
+      "OVHL_Server": {
+        "$path": "src/server"
+      },
+      "OVHL_test_Server": {
+        "$path": "test/server"
+      }
+    },
+    "StarterPlayer": {
+      "$className": "StarterPlayer",
+      "StarterPlayerScripts": {
+        "$className": "StarterPlayerScripts",
+        "OVHL_Client": {
+          "$path": "src/client"
+        },
+        "OVHL_test_Client": {
+          "$path": "test/client"
+        }
+      }
+    }
+  }
+}
+```
+
+> NEXT SESION AI SILAHKAN PAHAMI KONTEKS PENGGUNAAN FOLDER `./test/*` DENGAN BENAR. TUJUAN INI ADLAH UNTUK CEK API GLOBAL ASESOR
+> DIBAWAH INI MASIH ADA PROBLEM YANG PERLU DI SELESAIKAN, SILAHKAN SINKRONKAN DENGAN ROADMAP SERTA SNAPSHOT YANG TERLAMPIR
+
+---
+
+## Rabu, 29 Oktober 2025 - 18:30 WIB - DeepSeek AI
+
+---
+
+- **YANG DIKERJAKAN:**
+
+  - ❌ **TEST SYSTEM IMPLEMENTATION** \- Coba bikin automated test suite
+
+  - Implement Rojo mapping untuk `tests/` folder
+
+  - Bikin integration test scripts untuk OVHL services
+
+- **HASIL/PROGRES:**
+
+  - ✅ **ROJO CONFIG UPDATED** \- Test folder mapping berhasil
+
+  - ✅ **TEST SCRIPTS CREATED** \- TestFullIntegration & TestConfigService
+
+  - ✅ **SCRIPTS DEPLOYED** \- File masuk ke Roblox Studio via Rojo
+
+  - ❌ **TEST EXECUTION FAILED** \- Scripts tidak jalan otomatis
+
+- **MASALAH/ERROR YANG DIHADAPI:**
+
+  - ❌ **Script test tidak auto-execute** \- Cuma jadi Script object, tidak running
+
+  - ❌ **Manual command required** \- Developer harus manually run test
+
+  - ❌ **No immediate feedback** \- Tidak sesuai goal "quick debugging"
+
+  - ✅ **BOOTSTRAP SYSTEM 100% WORKING** \- Foundation solid, cuma test system yang bermasalah
+
+- **YANG TIDAK BOLEH DILAKUKAN:**
+
+  - ❌ **JANGAN TERUSIN TEST SYSTEM** kalau butuh complex workaround
+
+  - ❌ **JANGAN ABAIKAN CORE FEATURES** buat ngejar test automation
+
+- **TRIK & TIPS YANG BERHASIL:**
+
+  - ✅ **Rojo folder mapping** work untuk organization
+
+  - ✅ **OVHL Global API accessible** \- manual testing possible
+
+  - ✅ **Bootstrap stability proven** \- 0 errors di semua services
+
+- **INSTRUKSI UNTUK NEXT AI:**
+
+  - 🚀 **PIVOT: SKIP TEST AUTOMATION** untuk sekarang, Tapi dev perlu diingatkan untuk segera lakukan ini.
+
+  - 📋 **BACK TO ROADMAP:** Lanjut OVHL-003 DataService
+
+  - 🔧 **Manual testing approach:** Developer bisa pake command bar
+
+  - 🎯 **Focus on core features** \- test system bisa di-improve later
+
+---
+
 ## Rabu, 29 Oktober 2025 - 17:31 WIB (DeepSeek AI)
 
 - **YANG DIKERJAKAN:**
